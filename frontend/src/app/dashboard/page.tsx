@@ -13,6 +13,75 @@ const containerVariants = {
   show: { opacity: 1, transition: { staggerChildren: 0.1 } }
 };
 
+const AnimatedPet = ({ pet, equippedItems, onClickShop }: any) => {
+  const [animState, setAnimState] = useState<"idle" | "hurt">("idle");
+  const [frame, setFrame] = useState(1);
+
+  useEffect(() => {
+    const maxFrames = animState === "idle" ? 8 : 4;
+    const interval = setInterval(() => {
+      setFrame((prev) => {
+        if (prev >= maxFrames) {
+          if (animState === "hurt") {
+            setAnimState("idle");
+            return 1;
+          }
+          return 1;
+        }
+        return prev + 1;
+      });
+    }, 150); // ~6-7 FPS
+    return () => clearInterval(interval);
+  }, [animState]);
+
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Biar ga trigger pindah ke shop
+    setAnimState("hurt");
+    setFrame(1);
+  };
+
+  const isKucing = pet.species.toLowerCase() === "kucing";
+  const currentFolder = animState === "idle" ? "IDLE" : "HURT";
+  const prefix = animState === "idle" ? "idle" : "hurt";
+  
+  // Gunakan sprite sequence kalau kucing, jika tidak fallback ke gambar lama
+  const imageSrc = isKucing 
+    ? `/asset/karakter/kucing/${currentFolder}/${prefix}_${frame}.png` 
+    : `/pets/${pet.species}_${pet.level < 6 ? 'bayi' : 'dewasa'}.png`;
+
+  return (
+    <div 
+      className="relative w-24 h-24 bg-gradient-to-br from-surface1 to-surface0 rounded-3xl border-4 border-surface2 overflow-hidden flex items-center justify-center shadow-inner shrink-0 group hover:scale-105 transition-transform cursor-pointer" 
+      onClick={onClickShop}
+      onDoubleClick={handleDoubleClick}
+      title="Klik dua kali untuk mengganggu!"
+    >
+      <div className="absolute inset-0 flex items-center justify-center opacity-10 blur-sm z-0">
+        <p className="text-4xl">{pet.species === "kucing" ? "🐱" : pet.species === "anjing" ? "🐶" : "🐦"}</p>
+      </div>
+      
+      {/* Pet Sprite Layer */}
+      <img 
+        src={imageSrc} 
+        alt={`${pet.name} - ${animState}`}
+        className="absolute inset-0 w-full h-full object-contain z-10 drop-shadow-md scale-110 select-none"
+        onError={(e) => { (e.target as HTMLImageElement).style.opacity = '0'; }}
+      />
+      
+      {/* Cosmetic Equipment Layer */}
+      {equippedItems?.map((item: any) => (
+        <img 
+          key={item.id}
+          src={item.image_url} 
+          alt={item.name}
+          className={`absolute inset-0 w-full h-full object-contain z-20 drop-shadow-md scale-110 pointer-events-none select-none transition-transform duration-75 ${animState === "hurt" ? "translate-y-1 scale-100 rotate-2" : ""}`}
+          onError={(e) => { (e.target as HTMLImageElement).style.opacity = '0'; }}
+        />
+      ))}
+    </div>
+  );
+};
+
 export default function DashboardPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -257,26 +326,7 @@ export default function DashboardPage() {
       {/* Top Header */}
       <header className="bg-surface0 border-b-4 border-surface1 shadow-sm px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 z-20">
         <div className="flex items-center gap-6">
-          <div className="relative w-20 h-20 bg-gradient-to-br from-surface1 to-surface0 rounded-2xl border-4 border-surface2 overflow-hidden flex items-center justify-center shadow-inner shrink-0 group hover:scale-105 transition-transform cursor-pointer" onClick={() => router.push("/shop")}>
-            <div className="absolute inset-0 flex items-center justify-center opacity-10 blur-sm z-0">
-              <p className="text-4xl">{pet.species === "kucing" ? "🐱" : pet.species === "anjing" ? "🐶" : "🐦"}</p>
-            </div>
-            <img 
-              src={`/pets/${pet.species}_${pet.level < 6 ? 'bayi' : 'dewasa'}.png`} 
-              alt={pet.name}
-              className="absolute inset-0 w-full h-full object-contain z-10 drop-shadow-sm"
-              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-            />
-            {equipped_items?.map((item: any) => (
-              <img 
-                key={item.id}
-                src={item.image_url} 
-                alt={item.name}
-                className="absolute inset-0 w-full h-full object-contain z-20 drop-shadow-sm"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-              />
-            ))}
-          </div>
+          <AnimatedPet pet={pet} equippedItems={equipped_items} onClickShop={() => router.push("/shop")} />
 
           <div className="flex flex-col gap-1">
             <h2 className="font-black text-xl text-mauve tracking-wide flex items-center gap-2">
