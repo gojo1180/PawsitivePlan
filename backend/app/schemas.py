@@ -54,6 +54,11 @@ class PetBase(BaseModel):
     species: str
     level: int = 1
     experience: int = 0
+    health: int = 100
+    hunger: int = 100
+    thirst: int = 100
+    is_dead: bool = False
+    last_updated: Optional[datetime] = None
 
 class PetCreate(PetBase):
     pass
