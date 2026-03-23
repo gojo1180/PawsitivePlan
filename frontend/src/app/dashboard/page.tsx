@@ -414,7 +414,7 @@ export default function DashboardPage() {
                   </div>
                   
                   <Droppable droppableId={colName}>
-                    {(provided, snapshot) => (
+                    {(provided: any, snapshot: any) => (
                       <div 
                         ref={provided.innerRef} 
                         {...provided.droppableProps}
@@ -432,7 +432,7 @@ export default function DashboardPage() {
                         <AnimatePresence>
                           {colTasks.map((task, index) => (
                             <Draggable key={task.id} draggableId={task.id} index={index}>
-                              {(provided, snapshot) => (
+                              {(provided: any, snapshot: any) => (
                                 <div
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
