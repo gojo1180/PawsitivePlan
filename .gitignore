@@ -1,0 +1,17 @@
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+.next/
+dist/
+build/
+
+# User requested
+.env
+.DS_Store
+__MACOSX/
+._*
+.AppleDouble
+.LSOverride
