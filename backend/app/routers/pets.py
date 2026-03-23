@@ -10,8 +10,37 @@ def get_my_pet(user_id: str = Depends(get_current_user), db: Client = Depends(ge
     try:
         # 1. Get the individual user pet
         pet_res = db.table("pets").select("*").eq("user_id", user_id).execute()
+        
+        # AUTO HEALING: Jika user dibuat manual di Supabase Auth (tidak via register API),
+        # mereka tidak punya pet & profile, jadi otomatis kita buatkan agar tidak dilempar 404!
         if not pet_res.data:
-            raise HTTPException(status_code=404, detail="Pet data not initialized for this user")
+            import httpx
+            from ..database import SUPABASE_URL, SUPABASE_KEY
+            headers = {
+                "apikey": SUPABASE_KEY,
+                "Authorization": f"Bearer {SUPABASE_KEY}",
+                "Content-Type": "application/json",
+                "Prefer": "return=representation"
+            }
+            # Auto-create profile
+            httpx.post(f"{SUPABASE_URL}/rest/v1/profiles", headers=headers, json={
+                "id": user_id,
+                "username": "Pemain Manual",
+                "coins": 0
+            })
+            # Auto-create pet
+            httpx.post(f"{SUPABASE_URL}/rest/v1/pets", headers=headers, json={
+                "user_id": user_id,
+                "name": "Kucing Sakti",
+                "species": "kucing",
+                "level": 1,
+                "experience": 0
+            })
+            # Fetch ulang setelah auto-heal
+            pet_res = db.table("pets").select("*").eq("user_id", user_id).execute()
+            if not pet_res.data:
+                raise HTTPException(status_code=404, detail="Masih gagal membuat pet auto-heal")
+                
         pet = pet_res.data[0]
 
         # 2. Hydrate equipped items

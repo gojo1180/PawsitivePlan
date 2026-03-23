@@ -3,7 +3,8 @@ from typing import List
 from supabase import Client
 from ..database import get_supabase
 from ..dependencies import get_current_user
-from ..schemas import TaskCreate, TaskResponse
+from ..schemas import TaskCreate, TaskUpdate, TaskResponse
+from pydantic import BaseModel
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
@@ -20,7 +21,7 @@ def get_tasks(user_id: str = Depends(get_current_user), db: Client = Depends(get
 def create_task(task: TaskCreate, user_id: str = Depends(get_current_user), db: Client = Depends(get_supabase)):
     try:
         # We explicitly lock task.user_id to the token's authenticated ID for security
-        task_data = task.model_dump()
+        task_data = task.model_dump(mode="json")
         task_data['user_id'] = user_id
         res = db.table("tasks").insert(task_data).execute()
         return res.data[0]
@@ -51,5 +52,51 @@ def complete_task(task_id: str, user_id: str = Depends(get_current_user), db: Cl
         return {"message": "Task completed", "reward": reward_coins, "new_coins_balance": new_coins}
     except HTTPException:
         raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.delete("/{task_id}")
+def delete_task(task_id: str, user_id: str = Depends(get_current_user), db: Client = Depends(get_supabase)):
+    try:
+        res = db.table("tasks").delete().eq("id", task_id).eq("user_id", user_id).execute()
+        if not res.data:
+            raise HTTPException(status_code=404, detail="Task not found or is unauthorized.")
+        return {"message": "Task deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.delete("/clear/completed")
+def clear_completed_tasks(user_id: str = Depends(get_current_user), db: Client = Depends(get_supabase)):
+    try:
+        res = db.table("tasks").delete().eq("user_id", user_id).eq("is_completed", True).execute()
+        return {"message": "Completed tasks cleared", "deleted_count": len(res.data) if res.data else 0}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.patch("/{task_id}")
+def update_task_generic(task_id: str, task: TaskUpdate, user_id: str = Depends(get_current_user), db: Client = Depends(get_supabase)):
+    try:
+        update_data = task.model_dump(exclude_unset=True, mode="json")
+        if not update_data:
+            return {"message": "No items to update"}
+        res = db.table("tasks").update(update_data).eq("id", task_id).eq("user_id", user_id).execute()
+        if not res.data:
+            raise HTTPException(status_code=404, detail="Task not found or unauthorized")
+        return res.data[0]
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+class ColumnsUpdate(BaseModel):
+    columns: List[str]
+
+@router.patch("/board/columns")
+def update_board_columns(req: ColumnsUpdate, user_id: str = Depends(get_current_user), db: Client = Depends(get_supabase)):
+    try:
+        res = db.table("profiles").update({"board_columns": req.columns}).eq("id", user_id).execute()
+        if not res.data:
+            raise HTTPException(status_code=404, detail="Profile not found")
+        return {"board_columns": res.data[0]["board_columns"]}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

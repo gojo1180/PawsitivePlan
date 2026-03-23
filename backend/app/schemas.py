@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, ConfigDict
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 from uuid import UUID
 
@@ -17,6 +17,7 @@ class ProfileUpdate(BaseModel):
 
 class ProfileResponse(ProfileBase):
     id: UUID
+    board_columns: List[str] = ["To Do", "Daily Quest", "Event", "Selesai"]
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
 
@@ -26,6 +27,9 @@ class TaskBase(BaseModel):
     is_completed: bool = False
     is_ai_generated: bool = False
     reward_coins: int = Field(ge=10, le=30, default=10)
+    category: str = "To Do"
+    order_index: float = 0.0
+    due_date: Optional[datetime] = None
 
 class TaskCreate(TaskBase):
     pass
@@ -34,6 +38,9 @@ class TaskUpdate(BaseModel):
     title: Optional[str] = None
     is_completed: Optional[bool] = None
     reward_coins: Optional[int] = Field(ge=10, le=30, default=None)
+    category: Optional[str] = None
+    order_index: Optional[float] = None
+    due_date: Optional[datetime] = None
 
 class TaskResponse(TaskBase):
     id: UUID
