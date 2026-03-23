@@ -42,7 +42,8 @@ const AnimatedPet = ({ pet, equippedItems, onClickShop }: any) => {
 
   const isKucing = pet.species.toLowerCase() === "kucing";
   const currentFolder = animState === "idle" ? "IDLE" : "HURT";
-  const prefix = animState === "idle" ? "idle" : "hurt";
+  // The user uploaded the files as uppercase IDLE_1.png
+  const prefix = animState === "idle" ? "IDLE" : "HURT";
   
   // Gunakan sprite sequence kalau kucing, jika tidak fallback ke gambar lama
   const imageSrc = isKucing 
