@@ -49,12 +49,23 @@ export default function TaskCard({
             <h4 className={`font-bold text-sm text-text leading-tight ${isDoneCol ? "line-through text-subtext0" : ""}`}>
               {task.title}
             </h4>
-            {task.due_date && (
-              <div className="flex items-center gap-1 text-[10px] text-maroon font-black mt-1 uppercase">
-                <CalendarDays size={12} />
-                {format(new Date(task.due_date), "dd MMM")}
-              </div>
-            )}
+            <div className="flex flex-col gap-1 mt-1">
+              {task.due_date && (
+                <div className="flex items-center gap-1 text-[10px] text-maroon font-black uppercase">
+                  <CalendarDays size={12} />
+                  {format(new Date(task.due_date), "dd MMM")}
+                </div>
+              )}
+              {task.tags && task.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {task.tags.map((tag, i) => (
+                    <span key={i} className="px-1.5 py-0.5 bg-surface2 text-text rounded text-[9px] font-bold tracking-wide uppercase">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

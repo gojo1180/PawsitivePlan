@@ -27,16 +27,14 @@ export default function DashboardPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>("quest");
   const [isAiOpen, setIsAiOpen] = useState(false);
-  const [newColumnName, setNewColumnName] = useState("");
-
   const {
-    mounted, data, tasks, boardColumns, visibleColumns,
-    isAddingTask, manualTask, manualReward, manualCategory, manualDueDate,
+    mounted, data, tasks, boardColumns, visibleColumns, activeTag,
+    isAddingTask, manualTask, manualReward, manualCategory, manualDueDate, manualTags,
     isFeeding,
-    setIsAddingTask,
-    setManualTask, setManualReward, setManualCategory, setManualDueDate,
+    setIsAddingTask, setActiveTag,
+    setManualTask, setManualReward, setManualCategory, setManualDueDate, setManualTags,
     handleLogout, completeTask, deleteTask, clearCompleted, feedPet, discardPet,
-    addManualTask, addColumn, removeColumn, onDragEnd,
+    addManualTask, onDragEnd,
     toggleColumnVis, clearColumnFilter, loadDashboard,
   } = useDashboard();
 
@@ -53,10 +51,9 @@ export default function DashboardPage() {
     (c) => visibleColumns.length === 0 || visibleColumns.includes(c)
   );
 
-  const handleAddColumn = () => {
-    addColumn(newColumnName);
-    setNewColumnName("");
-  };
+  const uniqueTags = Array.from(
+    new Set(tasks.flatMap((t) => t.tags || []))
+  ).sort();
 
   const handleAIManualReload = () => {
     // Force reload via a full page reload or routing refresh to refetch tasks 
@@ -144,6 +141,31 @@ export default function DashboardPage() {
                   </button>
                 ))}
                 
+                <div className="h-6 w-px bg-surface2 mx-2" /> {/* Divider */}
+
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-black text-subtext0 flex items-center gap-1 shrink-0">
+                    <Filter size={14} /> Tag:
+                  </span>
+                  <select
+                    value={activeTag}
+                    onChange={(e) => setActiveTag(e.target.value)}
+                    className="bg-surface1 border border-surface2 rounded-xl px-3 py-1 text-[10px] font-bold w-[120px] focus:outline-none focus:border-blue transition-colors appearance-none cursor-pointer"
+                  >
+                    <option value="">Semua Tag</option>
+                    {uniqueTags.map((tag) => (
+                      <option key={tag} value={tag}>
+                        {tag}
+                      </option>
+                    ))}
+                  </select>
+                  {activeTag && (
+                    <button onClick={() => setActiveTag("")} className="text-[10px] text-red shrink-0 hover:underline">
+                      Clear
+                    </button>
+                  )}
+                </div>
+
                 <div className="h-6 w-px bg-surface2 mx-1" /> {/* Divider */}
                 
                 <button
@@ -170,6 +192,7 @@ export default function DashboardPage() {
                             ? t.is_completed
                             : !t.is_completed && t.category === colName
                         )
+                        .filter((t) => (activeTag ? t.tags?.some(tag => tag.toLowerCase().includes(activeTag.toLowerCase())) : true))
                         .sort((a, b) => a.order_index - b.order_index);
 
                       return (
@@ -179,38 +202,12 @@ export default function DashboardPage() {
                           tasks={colTasks}
                           onComplete={completeTask}
                           onDelete={deleteTask}
-                          onRemoveColumn={removeColumn}
                           onClearCompleted={clearCompleted}
+                          onRemoveColumn={() => {}}
                         />
                       );
                     })}
                   </DragDropContext>
-
-                  {/* Add Column Widget */}
-                  <div className="w-[300px] flex flex-col shrink-0 mt-[44px]">
-                    <div className="bg-surface0 border-2 border-dashed border-surface2 hover:border-blue transition-colors rounded-2xl p-4 flex flex-col gap-3 group shadow-sm">
-                      <h4 className="font-black text-sm text-subtext0 group-hover:text-blue flex items-center gap-2 transition-colors">
-                        <Plus size={16} /> Tambah Kolom
-                      </h4>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          value={newColumnName}
-                          onChange={(e) => setNewColumnName(e.target.value)}
-                          onKeyDown={(e) => e.key === "Enter" && handleAddColumn()}
-                          placeholder="Msl. Daily"
-                          className="bg-base border-2 border-surface1 rounded-xl px-3 py-2 text-xs font-bold w-full focus:outline-none focus:border-blue transition-colors"
-                        />
-                        <button
-                          onClick={handleAddColumn}
-                          className="bg-blue hover:bg-sapphire text-crust p-2 rounded-xl border-b-2 border-sapphire active:border-b-0 active:translate-y-px transition-all"
-                          aria-label="Add column"
-                        >
-                          <Plus size={16} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
                 </motion.div>
               </div>
             </>
@@ -262,6 +259,7 @@ export default function DashboardPage() {
         manualReward={manualReward}
         manualCategory={manualCategory}
         manualDueDate={manualDueDate}
+        manualTags={manualTags}
         boardColumns={boardColumns}
         onClose={() => setIsAddingTask(!isAddingTask)}
         onSubmit={addManualTask}
@@ -269,6 +267,7 @@ export default function DashboardPage() {
         onRewardChange={setManualReward}
         onCategoryChange={setManualCategory}
         onDueDateChange={setManualDueDate}
+        onTagsChange={setManualTags}
       />
     </div>
   );

@@ -17,7 +17,7 @@ class ProfileUpdate(BaseModel):
 
 class ProfileResponse(ProfileBase):
     id: UUID
-    board_columns: List[str] = ["To Do", "Daily Quest", "Event", "Selesai"]
+    board_columns: List[str] = ["Daily Quest", "Event", "Selesai"]
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
 
@@ -27,9 +27,11 @@ class TaskBase(BaseModel):
     is_completed: bool = False
     is_ai_generated: bool = False
     reward_coins: int = Field(ge=10, le=30, default=10)
-    category: str = "To Do"
+    category: str = "Daily Quest"
     order_index: float = 0.0
     due_date: Optional[datetime] = None
+    tags: List[str] = []
+    last_completed_at: Optional[datetime] = None
 
 class TaskCreate(TaskBase):
     pass
@@ -41,6 +43,8 @@ class TaskUpdate(BaseModel):
     category: Optional[str] = None
     order_index: Optional[float] = None
     due_date: Optional[datetime] = None
+    tags: Optional[List[str]] = None
+    last_completed_at: Optional[datetime] = None
 
 class TaskResponse(TaskBase):
     id: UUID

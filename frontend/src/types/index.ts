@@ -50,6 +50,8 @@ export interface Task {
   order_index: number;
   due_date: string | null;
   created_at: string;
+  tags?: string[];
+  last_completed_at?: string | null;
 }
 
 export interface DashboardData {
@@ -62,4 +64,5 @@ export interface AiTaskDraft {
   title: string;
   reward_coins: number;
   category: string;
+  tags?: string[];
 }

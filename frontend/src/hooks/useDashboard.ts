@@ -24,8 +24,10 @@ export function useDashboard() {
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [manualTask, setManualTask] = useState("");
   const [manualReward, setManualReward] = useState(MIN_TASK_COINS);
-  const [manualCategory, setManualCategory] = useState("To Do");
+  const [manualCategory, setManualCategory] = useState("Daily Quest");
   const [manualDueDate, setManualDueDate] = useState("");
+  const [manualTags, setManualTags] = useState("");
+  const [activeTag, setActiveTag] = useState("");
 
   // Feed Pet state
   const [isFeeding, setIsFeeding] = useState(false);
@@ -40,7 +42,7 @@ export function useDashboard() {
       ]);
       setData(petData);
       setTasks(tasksData);
-      setBoardColumns(petData.profile?.board_columns || [...DEFAULT_BOARD_COLUMNS]);
+      setBoardColumns([...DEFAULT_BOARD_COLUMNS]);
     } catch {
       router.push("/login");
     }
@@ -145,8 +147,13 @@ export function useDashboard() {
       const activeColumns = boardColumns.filter((c) => c !== DONE_COLUMN);
       const safeCategory = activeColumns.includes(manualCategory)
         ? manualCategory
-        : activeColumns[0] || "To Do";
+        : activeColumns[0] || "Daily Quest";
       const isoDate = manualDueDate ? new Date(manualDueDate).toISOString() : null;
+
+      const parsedTags = manualTags
+        .split(",")
+        .map((t) => t.trim())
+        .filter((t) => t.length > 0);
 
       await fetchApi("/tasks", {
         method: "POST",
@@ -156,12 +163,14 @@ export function useDashboard() {
           is_ai_generated: false,
           category: safeCategory,
           due_date: isoDate,
+          tags: parsedTags,
         }),
       });
 
       setManualTask("");
       setManualReward(MIN_TASK_COINS);
       setManualDueDate("");
+      setManualTags("");
       setIsAddingTask(false);
       loadDashboard();
     } catch (err: unknown) {
@@ -170,31 +179,6 @@ export function useDashboard() {
     }
   };
 
-  // ─── Board Columns ────────────────────────────────────────────────────────────
-
-  const addColumn = async (newColumnName: string) => {
-    if (!newColumnName.trim()) return;
-    const coreCols = boardColumns.filter((c) => c !== DONE_COLUMN);
-    const newCols = [...coreCols, newColumnName.trim(), DONE_COLUMN];
-    setBoardColumns(newCols);
-    try {
-      await fetchApi("/tasks/board/columns", {
-        method: "PATCH",
-        body: JSON.stringify({ columns: newCols }),
-      });
-    } catch { /* silent */ }
-  };
-
-  const removeColumn = async (colName: string) => {
-    const newCols = boardColumns.filter((c) => c !== colName);
-    setBoardColumns(newCols);
-    try {
-      await fetchApi("/tasks/board/columns", {
-        method: "PATCH",
-        body: JSON.stringify({ columns: newCols }),
-      });
-    } catch { /* silent */ }
-  };
 
   // ─── Drag & Drop ─────────────────────────────────────────────────────────────
 
@@ -250,7 +234,7 @@ export function useDashboard() {
         method: "POST",
         body: JSON.stringify({ goal }),
       });
-      const defaultCategory = boardColumns.find((c) => c !== DONE_COLUMN) || "To Do";
+      const defaultCategory = boardColumns.find((c) => c !== DONE_COLUMN) || "Daily Quest";
       setAiTasks(gTasks.map((t: AiTaskDraft) => ({ ...t, category: defaultCategory })));
     } catch {
       alert("Failed to generate AI tasks.");
@@ -294,16 +278,16 @@ export function useDashboard() {
 
   return {
     // State
-    mounted, data, tasks, boardColumns, visibleColumns,
+    mounted, data, tasks, boardColumns, visibleColumns, activeTag,
     goal, generating, aiTasks,
-    isAddingTask, manualTask, manualReward, manualCategory, manualDueDate,
+    isAddingTask, manualTask, manualReward, manualCategory, manualDueDate, manualTags,
     isFeeding,
     // Setters
-    setGoal, setIsAddingTask,
-    setManualTask, setManualReward, setManualCategory, setManualDueDate,
+    setGoal, setIsAddingTask, setActiveTag,
+    setManualTask, setManualReward, setManualCategory, setManualDueDate, setManualTags,
     // Actions
     handleLogout, completeTask, deleteTask, clearCompleted, feedPet, discardPet,
-    addManualTask, addColumn, removeColumn, onDragEnd,
+    addManualTask, onDragEnd,
     handleGenerateAI, saveAITasks, updateAiTask, removeAiTask,
     toggleColumnVis, clearColumnFilter, loadDashboard,
   };

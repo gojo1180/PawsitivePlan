@@ -2,7 +2,7 @@
 // PawsitivePlan — App-wide Constants
 // ============================================================
 
-export const DEFAULT_BOARD_COLUMNS = ["To Do", "Daily Quest", "Event", "Selesai"] as const;
+export const DEFAULT_BOARD_COLUMNS = ["Daily Quest", "Event", "Selesai"] as const;
 
 export const DONE_COLUMN = "Selesai";
 
