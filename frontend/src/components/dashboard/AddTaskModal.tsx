@@ -141,18 +141,6 @@ export default function AddTaskModal({
         )}
       </AnimatePresence>
 
-      {/* Floating Action Button */}
-      <motion.button
-        whileHover={{ scale: 1.1, rotate: 180 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={() => (isOpen ? onClose() : onClose())} // toggled externally via isOpen prop
-        aria-label={isOpen ? "Close add task form" : "Open add task form"}
-        className={`w-16 h-16 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.5)] border-4 flex items-center justify-center text-crust transition-all duration-300 z-50 ${
-          isOpen ? "bg-red border-maroon rotate-45" : "bg-blue border-sapphire hover:bg-sapphire"
-        }`}
-      >
-        <Plus size={32} strokeWidth={4} />
-      </motion.button>
     </div>
   );
 }

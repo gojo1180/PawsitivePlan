@@ -305,6 +305,6 @@ export function useDashboard() {
     handleLogout, completeTask, deleteTask, clearCompleted, feedPet, discardPet,
     addManualTask, addColumn, removeColumn, onDragEnd,
     handleGenerateAI, saveAITasks, updateAiTask, removeAiTask,
-    toggleColumnVis, clearColumnFilter,
+    toggleColumnVis, clearColumnFilter, loadDashboard,
   };
 }

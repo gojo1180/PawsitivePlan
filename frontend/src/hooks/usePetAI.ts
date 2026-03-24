@@ -10,6 +10,16 @@ export function usePetAI(pet: Pet) {
 
   const animState = pet.is_dead ? "dead" : internalState;
 
+  const playMeow = useCallback(() => {
+    if (pet.species.toLowerCase() === "kucing" && typeof window !== "undefined") {
+      const audio = new Audio("/asset/audio/cat-meow.mp3");
+      audio.volume = 0.5;
+      audio.play().catch(() => {
+        // Safe catch for autoplay policies before user interaction
+      });
+    }
+  }, [pet.species]);
+
   useEffect(() => {
     if (animState === "dead") return;
 
@@ -33,7 +43,12 @@ export function usePetAI(pet: Pet) {
       } else {
         // Random chatter
         const chatter = ["Meow!", "Purrr...", "Zzz", "", "", ""];
-        setChatMessage(chatter[Math.floor(Math.random() * chatter.length)]);
+        const msg = chatter[Math.floor(Math.random() * chatter.length)];
+        setChatMessage(msg);
+        
+        if (msg === "Meow!" || msg === "Purrr...") {
+          playMeow();
+        }
       }
 
       if (isWeak && rand < 0.6) {
@@ -57,6 +72,7 @@ export function usePetAI(pet: Pet) {
   const interact = useCallback(() => {
     if (pet.is_dead) return;
     setInternalState("happy");
+    playMeow();
     // Play a tiny jump or heart animation
     setTimeout(() => {
       setInternalState("idle");

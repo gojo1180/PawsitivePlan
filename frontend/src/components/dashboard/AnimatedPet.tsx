@@ -118,10 +118,10 @@ export default function AnimatedPet({ pet, equippedItems, onClickShop, onDeleteP
   const petEmoji = pet.species === "kucing" ? "🐱" : pet.species === "anjing" ? "🐶" : "🐦";
 
   return (
-    <div className="flex flex-col items-center gap-3 w-full px-4">
+    <div className="flex flex-col items-center gap-3 w-full h-full">
       <div
-        className={`relative w-full h-32 md:h-40 bg-gradient-to-br from-surface1 to-surface0 rounded-3xl border-4 border-surface2 flex items-center justify-center shadow-[inset_0_4px_12px_rgba(0,0,0,0.3)] shrink-0 transition-colors ${
-          pet.is_dead ? "grayscale opacity-80" : "group hover:border-pink/50"
+        className={`relative w-full h-full flex items-center justify-center shrink-0 transition-colors ${
+          pet.is_dead ? "grayscale opacity-80" : "group"
         }`}
         onClick={!pet.is_dead ? interact : undefined}
         onMouseEnter={() => setIsHovered(true)}
@@ -155,7 +155,7 @@ export default function AnimatedPet({ pet, equippedItems, onClickShop, onDeleteP
                }
              }
            }}
-           className="absolute inset-0 w-full h-full z-50 cursor-grab active:cursor-grabbing"
+           className="relative w-32 h-32 md:w-48 md:h-48 z-50 cursor-grab active:cursor-grabbing"
            ref={spriteRef}
         >
           {/* Chat Cloud (Speech Bubble) */}
