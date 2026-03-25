@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { toast } from "react-hot-toast";
 import { fetchApi } from "@/lib/api";
 import { AiTaskDraft } from "@/types";
 import { DONE_COLUMN } from "@/lib/constants";
@@ -99,7 +100,7 @@ export function useAIAssistant(boardColumns: string[], onTasksSaved: () => void)
       setMessages(prev => prev.map(m => m.id === messageId ? { ...m, tasks: [] } : m));
       onTasksSaved(); // Trigger parent completely reloading dashboard
     } catch {
-      alert("Failed to save tasks.");
+      toast.error("Failed to save tasks.");
     }
   };
 

@@ -6,6 +6,7 @@ import { DropResult } from "@hello-pangea/dnd";
 import { fetchApi } from "@/lib/api";
 import { DashboardData, Task, AiTaskDraft } from "@/types";
 import { DEFAULT_BOARD_COLUMNS, DONE_COLUMN, MIN_TASK_COINS } from "@/lib/constants";
+import { toast } from "react-hot-toast";
 
 export function useDashboard() {
   const router = useRouter();
@@ -94,7 +95,7 @@ export function useDashboard() {
         prev.map((t) => (t.id === taskId ? { ...t, is_completed: true, category: DONE_COLUMN } : t))
       );
     } catch {
-      alert("Failed to complete task");
+      toast.error("Failed to complete task");
     }
   };
 
@@ -107,7 +108,7 @@ export function useDashboard() {
       loadDashboard();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal memberi makan.";
-      alert(msg);
+      toast.error(msg);
     } finally {
       setIsFeeding(false);
     }
@@ -118,7 +119,7 @@ export function useDashboard() {
       await fetchApi("/pets/me", { method: "DELETE" });
       loadDashboard();
     } catch {
-      alert("Gagal membuang peliharaan.");
+      toast.error("Gagal membuang peliharaan.");
     }
   };
 
@@ -127,7 +128,7 @@ export function useDashboard() {
       await fetchApi(`/tasks/${taskId}`, { method: "DELETE" });
       setTasks((prev) => prev.filter((t) => t.id !== taskId));
     } catch {
-      alert("Failed to delete task");
+      toast.error("Failed to delete task");
     }
   };
 
@@ -136,7 +137,7 @@ export function useDashboard() {
       await fetchApi("/tasks/clear/completed", { method: "DELETE" });
       setTasks((prev) => prev.filter((t) => !t.is_completed));
     } catch {
-      alert("Failed to clear tasks");
+      toast.error("Failed to clear tasks");
     }
   };
 
@@ -183,7 +184,7 @@ export function useDashboard() {
       loadDashboard();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Validasi gagal.";
-      alert(`Gagal menambah task: ${msg}`);
+      toast.error(`Gagal menambah task: ${msg}`);
     }
   };
 
@@ -252,7 +253,7 @@ export function useDashboard() {
       const defaultCategory = boardColumns.find((c) => c !== DONE_COLUMN) || "Daily Quest";
       setAiTasks(gTasks.map((t: AiTaskDraft) => ({ ...t, category: defaultCategory })));
     } catch {
-      alert("Failed to generate AI tasks.");
+      toast.error("Failed to generate AI tasks.");
     } finally {
       setGenerating(false);
     }
@@ -275,7 +276,7 @@ export function useDashboard() {
       setGoal("");
       loadDashboard();
     } catch {
-      alert("Failed to save tasks.");
+      toast.error("Failed to save tasks.");
     }
   };
 

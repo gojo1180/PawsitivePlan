@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { DragDropContext } from "@hello-pangea/dnd";
-import { motion } from "framer-motion";
-import { Filter, Plus, Target, Heart, ShoppingBag, ChevronLeft, ChevronRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Filter, Plus, Target, Heart, ShoppingBag, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 
 import { useDashboard } from "@/hooks/useDashboard";
 import LoadingScreen from "@/components/ui/LoadingScreen";
@@ -230,14 +230,43 @@ export default function DashboardPage() {
         {/* ─── Right SIDEBAR: AI Assistant ──────────────────────────────────────── */}
         <div className={`relative shrink-0 flex transition-all duration-300 ${isAiOpen ? "w-[300px] md:w-[320px]" : "w-0"}`}>
 
-          {/* Toggle Button */}
-          <button
-            onClick={() => setIsAiOpen(!isAiOpen)}
-            className="absolute -left-8 top-1/2 -translate-y-1/2 z-50 bg-surface1 text-text border-y-2 border-l-2 border-surface2 hover:border-blue hover:text-blue w-8 h-16 rounded-l-xl flex items-center justify-center transition-colors shadow-[-4px_0_10px_rgba(0,0,0,0.1)] focus:outline-none"
-            title={isAiOpen ? "Sembunyikan AI Assistant" : "Tampilkan AI Assistant"}
-          >
-            {isAiOpen ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-          </button>
+          {/* New Prominent CTA Toggle */}
+          <div className="absolute -left-12 top-1/2 -translate-y-1/2 z-50 flex flex-col items-center">
+            <AnimatePresence mode="wait">
+              {!isAiOpen ? (
+                <motion.button
+                  key="open"
+                  initial={{ opacity: 0, x: 20, scale: 0.8 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: 20, scale: 0.8 }}
+                  whileHover={{ scale: 1.1, x: -5 }}
+                  onClick={() => setIsAiOpen(true)}
+                  className="bg-surface1 text-blue border-2 border-blue/30 p-3 rounded-2xl shadow-lg pixel-shadow-blue flex flex-col items-center gap-1 group hover:bg-blue/10 transition-colors"
+                  title="Ask AI Assistant"
+                >
+                  <motion.div
+                    animate={{ rotate: [0, 15, -15, 0] }}
+                    transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                  >
+                    <Sparkles size={24} className="group-hover:text-blue" />
+                  </motion.div>
+                  <span className="pixel-font text-[8px] writing-vertical uppercase tracking-widest mt-1">AI</span>
+                </motion.button>
+              ) : (
+                <motion.button
+                  key="close"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  onClick={() => setIsAiOpen(false)}
+                  className="bg-surface1 text-text border-2 border-surface2 hover:border-red hover:text-red w-8 h-16 rounded-l-xl flex items-center justify-center transition-colors shadow-[-4px_0_10px_rgba(0,0,0,0.1)] focus:outline-none"
+                  title="Hide AI Assistant"
+                >
+                  <ChevronRight size={20} />
+                </motion.button>
+              )}
+            </AnimatePresence>
+          </div>
 
           <div className="w-[300px] md:w-[320px] overflow-hidden">
             <AIAssistantSidebar

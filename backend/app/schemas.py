@@ -84,6 +84,7 @@ class ShopItemBase(BaseModel):
     type: str # e.g., 'food', 'accessory'
     price: int
     image_url: Optional[str] = None
+    image_url_walk: Optional[str] = None
     description: Optional[str] = None
     sprite_folder: Optional[str] = None
 
@@ -95,6 +96,7 @@ class ShopItemUpdate(BaseModel):
     type: Optional[str] = None
     price: Optional[int] = None
     image_url: Optional[str] = None
+    image_url_walk: Optional[str] = None
     description: Optional[str] = None
     sprite_folder: Optional[str] = None
 

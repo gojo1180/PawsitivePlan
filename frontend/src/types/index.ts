@@ -28,6 +28,7 @@ export interface ShopItem {
   type: string;
   price: number;
   image_url: string;
+  image_url_walk?: string;
   description?: string;
   sprite_folder?: string;
 }

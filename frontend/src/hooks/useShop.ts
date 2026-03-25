@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { fetchApi } from "@/lib/api";
 import { Profile, ShopItem, InventoryItem } from "@/types";
+import { toast } from "react-hot-toast";
 
 export function useShop() {
   const router = useRouter();
@@ -33,14 +34,14 @@ export function useShop() {
     loadData();
   }, [loadData]);
 
-  const handleBuy = async (itemId: string) => {
+  const handleBuy = async (itemId: string, quantity: number = 1) => {
     try {
-      await fetchApi(`/shop/buy/${itemId}`, { method: "POST" });
-      alert("Purchase successful!");
+      await fetchApi(`/shop/buy/${itemId}?quantity=${quantity}`, { method: "POST" });
+      toast.success("Purchase successful!");
       loadData();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to buy item";
-      alert(msg);
+      toast.error(msg);
     }
   };
 
@@ -49,7 +50,7 @@ export function useShop() {
       await fetchApi(`/pets/equip/${inventoryId}`, { method: "PATCH" });
       loadData();
     } catch {
-      alert("Failed to equip item");
+      toast.error("Failed to equip item");
     }
   };
 

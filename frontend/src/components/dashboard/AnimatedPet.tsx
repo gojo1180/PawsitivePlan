@@ -193,17 +193,14 @@ export default function AnimatedPet({ pet, equippedItems, onClickShop, onDeleteP
             <img
               src={imageSrc}
               alt={`${pet.name} - ${animState}`}
-              className="absolute inset-0 w-full h-full object-contain scale-110 select-none pixelated pointer-events-none"
+              className="absolute bottom-0 left-1/2 -translate-x-1/2 h-full w-auto max-w-none object-contain scale-110 pointer-events-none select-none pixelated"
               onError={(e) => {
                 (e.target as HTMLImageElement).style.opacity = "0";
               }}
               style={{ imageRendering: "pixelated", zIndex: 1 }}
             />
 
-            {/* ── Cosmetic Equipment Layers (frame-synced) ──
-               Each cosmetic has per-frame sprites in /asset/kosmetik/{FOLDER}/{STATE}/{PREFIX}{frame}.png.
-               We sync accessory frames to the pet's current animation frame.
-            */}
+            {/* ── Cosmetic Equipment Layers (frame-synced) ── */}
             {equippedItems?.map((item) => {
               // z-index layers: body(2) < cosmetic(3) < face(4) < head(5)
               const zIndex =
@@ -212,34 +209,42 @@ export default function AnimatedPet({ pet, equippedItems, onClickShop, onDeleteP
                     item.type === "head" ? 5 :
                 /* cosmetic/default */    3;
 
-              // Map shop item names to their sprite folder/prefix.
-              const COSMETIC_SPRITE_MAP: Record<string, [string, string, string]> = {
-                "mahkota emas": ["CROWN", "CROWN", "CROWN_WALK"],
-                "kacamata keren": ["GLASSES", "GLASSES", "GLASSES_WALK"],
-                "topi bajak laut": ["PIRRATEHAT", "PIRRATEHAT", "PIRRATEHAT_WALK"],
+              // Helper function ONLY injects the frame number into the resolved DB URL.
+              const resolveCosmeticUrl = (dbUrl: string, frame: number) => {
+                if (!dbUrl) return "";
+
+                // Jika ini Makanan/Minuman, jangan dianimasikan (tidak ada IDLE/WALK)
+                if (!dbUrl.includes("/IDLE/") && !dbUrl.includes("/WALK/")) {
+                  return dbUrl;
+                }
+
+                // Terakhir, pasangkan dengan nomor frame yang sedang berjalan
+                // Contoh: .../PIRRATEHAT_WALK1.png -> .../PIRRATEHAT_WALK7.png
+                return dbUrl.replace(/\d*\.png$/, `${frame}.png`);
               };
 
-              const itemKey = item.name.toLowerCase().trim();
-              const mapping = COSMETIC_SPRITE_MAP[itemKey];
+              // --- LOGIKA PEMANGGILANNYA ---
+              // Kita ambil data field dari API (menangani API bersarang maupun flat)
+              const itemData = (item as any).shop_items || item;
 
-              let cosmeticSrc: string;
-              if (mapping) {
-                const [folder, idlePrefix, walkPrefix] = mapping;
-                if (animState === "walk") {
-                  cosmeticSrc = `/asset/kosmetik/${folder}/WALK/${walkPrefix}${frame}.png`;
-                } else {
-                  cosmeticSrc = `/asset/kosmetik/${folder}/IDLE/${idlePrefix}${frame}.png`;
-                }
-              } else {
-                cosmeticSrc = item.image_url;
-              }
+              // Pilih URL dasarnya: if jalan dan ada url walk -> pakai walk. Else pakai idle.
+              const baseDbUrl = (animState === "walk" && itemData.image_url_walk)
+                ? itemData.image_url_walk
+                : itemData.image_url;
+
+              // Panggil fungsinya untuk inject frame
+              const cosmeticSrc = baseDbUrl ? resolveCosmeticUrl(baseDbUrl, frame) : "";
+
+              if (!cosmeticSrc) return null;
 
               return (
                 <img
                   key={item.id}
                   src={cosmeticSrc}
                   alt={item.name}
-                  className="absolute inset-0 w-full h-full object-contain scale-110 pointer-events-none select-none pixelated"
+                  // CRITICAL FIX 2.0: Karena ukuran canvas beda (33x32 vs 35x32) tapi tinggi sama (32),
+                  // kita kunci tinggi (h-full w-auto), lalu anchor posisinya tepat di tengah bawah.
+                  className="absolute bottom-0 left-1/2 -translate-x-1/2 h-full w-auto max-w-none object-contain scale-110 pointer-events-none select-none pixelated"
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.opacity = "0";
                   }}
