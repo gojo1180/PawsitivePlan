@@ -27,6 +27,28 @@ export default function TaskCard({
   onComplete,
   onDelete,
 }: TaskCardProps) {
+  /** Play confirmation sound instantly on click, then delegate to parent handler. */
+  const handleComplete = (id: string) => {
+    try {
+      const audio = new Audio("/asset/audio/confirmation_task.mp3");
+      audio.play();
+    } catch (e) {
+      console.error("Audio play failed:", e);
+    }
+    onComplete(id);
+  };
+
+  /** Play cancel sound instantly on click, then delegate to parent handler. */
+  const handleDelete = (id: string) => {
+    try {
+      const audio = new Audio("/asset/audio/Cancel_task.mp3");
+      audio.play();
+    } catch (e) {
+      console.error("Audio play failed:", e);
+    }
+    onDelete(id);
+  };
+
   return (
     <div
       ref={provided.innerRef}
@@ -41,7 +63,7 @@ export default function TaskCard({
       <div className="flex justify-between items-start gap-2">
         <div className="flex gap-2 items-start">
           {/* Drag handle */}
-          <div {...provided.dragHandleProps} className="mt-1 text-surface2 hover:text-text cursor-grab">
+          <div {...provided.dragHandleProps} className={`mt-1 transition-colors ${isDoneCol ? 'text-surface2 cursor-not-allowed opacity-50' : 'text-overlay1 hover:text-mauve cursor-grab'}`}>
             <GripVertical size={16} />
           </div>
 
@@ -70,18 +92,18 @@ export default function TaskCard({
         </div>
 
         {/* Hover action buttons */}
-        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
           <button
-            onClick={() => onDelete(task.id)}
-            className="text-surface2 hover:text-red"
+            onClick={() => handleDelete(task.id)}
+            className="text-overlay0 hover:text-red transition-colors"
             aria-label="Delete task"
           >
             <Trash2 size={16} />
           </button>
           {!isDoneCol && (
             <button
-              onClick={() => onComplete(task.id)}
-              className="text-surface2 hover:text-green"
+              onClick={() => handleComplete(task.id)}
+              className="text-overlay0 hover:text-green transition-colors"
               aria-label="Mark task complete"
             >
               <CheckCircle size={20} />

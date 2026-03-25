@@ -203,21 +203,39 @@ export default function AnimatedPet({ pet, equippedItems, onClickShop, onDeleteP
               style={{ imageRendering: "pixelated" }}
             />
 
-            {/* Cosmetic Equipment Layer */}
-            {equippedItems?.map((item) => (
-              <img
-                key={item.id}
-                src={item.image_url}
-                alt={item.name}
-                className={`absolute inset-0 w-full h-full object-contain z-20 drop-shadow-md scale-110 pointer-events-none select-none transition-transform duration-200 pixelated ${
-                  animState === "dead" ? "rotate-90 translate-y-4" : ""
-                }`}
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.opacity = "0";
-                }}
-                style={{ imageRendering: "pixelated" }}
-              />
-            ))}
+            {/* ── Cosmetic Equipment Layers ──
+               Strict z-index order:
+               body items  = z-20 (on top of pet body, behind everything else)
+               cosmetic    = z-25 (generic accessories)
+               face items  = z-28
+               head items  = z-30 (topmost)
+            */}
+            {equippedItems?.map((item) => {
+              // Determine z-index by item type
+              const zClass =
+                item.type === "body"    ? "z-20" :
+                item.type === "face"    ? "z-28" :
+                item.type === "head"    ? "z-30" :
+                /* cosmetic/default */    "z-25";
+
+              return (
+                <motion.img
+                  key={item.id}
+                  src={item.image_url}
+                  alt={item.name}
+                  initial={{ opacity: 0, scale: 0.6 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ type: "spring", stiffness: 280, damping: 20 }}
+                  className={`absolute inset-0 w-full h-full object-contain drop-shadow-md scale-110 pointer-events-none select-none pixelated ${zClass} ${
+                    animState === "dead" ? "rotate-90 translate-y-4" : ""
+                  }`}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.opacity = "0";
+                  }}
+                  style={{ imageRendering: "pixelated" }}
+                />
+              );
+            })}
           </div>
         </motion.div>
 

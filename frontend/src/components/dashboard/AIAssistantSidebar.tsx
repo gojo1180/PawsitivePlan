@@ -65,7 +65,12 @@ export default function AIAssistantSidebar({ boardColumns, onTasksSaved }: AIAss
                       className="bg-surface1 p-3 rounded-lg border border-surface2 shadow-sm relative group"
                     >
                       <button
-                        onClick={() => handleRemoveTask(msg.id, idx)}
+                        onClick={() => {
+                          try {
+                            new Audio("/asset/audio/Cancel_task.mp3").play();
+                          } catch (e) { console.error("Audio play failed:", e); }
+                          handleRemoveTask(msg.id, idx);
+                        }}
                         className="absolute -top-2 -right-2 bg-red text-crust p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:scale-110"
                       >
                         <X size={12} />
@@ -108,7 +113,12 @@ export default function AIAssistantSidebar({ boardColumns, onTasksSaved }: AIAss
                 </AnimatePresence>
                 
                 <button
-                  onClick={() => handleSaveTasks(msg.id)}
+                  onClick={() => {
+                    try {
+                      new Audio("/asset/audio/Tambah_task.mp3").play();
+                    } catch (e) { console.error("Audio play failed:", e); }
+                    handleSaveTasks(msg.id);
+                  }}
                   className="w-full bg-green text-crust font-black py-2 rounded-lg mt-2 flex justify-center items-center gap-2 border-b-4 border-teal active:border-b-0 active:translate-y-1 transition-all"
                 >
                   <Check size={16} /> Setuju

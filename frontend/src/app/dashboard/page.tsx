@@ -73,31 +73,28 @@ export default function DashboardPage() {
       <div className="border-b-2 border-surface1 bg-surface0 px-6 shrink-0 flex gap-1 z-20 shadow-sm relative z-30">
         <button
           onClick={() => setActiveTab("quest")}
-          className={`flex items-center gap-2 px-6 py-3 font-black text-sm uppercase tracking-widest transition-all rounded-t-xl border-t-4 border-x-2 ${
-            activeTab === "quest"
+          className={`flex items-center gap-2 px-6 py-3 font-black text-sm uppercase tracking-widest transition-all rounded-t-xl border-t-4 border-x-2 ${activeTab === "quest"
               ? "bg-base text-blue border-t-blue border-x-surface1 -mb-[2px] shadow-sm z-10"
               : "bg-surface0 text-subtext0 border-transparent hover:text-text hover:bg-surface1"
-          }`}
+            }`}
         >
           <Target size={18} /> Quest
         </button>
         <button
           onClick={() => setActiveTab("pet")}
-          className={`flex items-center gap-2 px-6 py-3 font-black text-sm uppercase tracking-widest transition-all rounded-t-xl border-t-4 border-x-2 ${
-            activeTab === "pet"
+          className={`flex items-center gap-2 px-6 py-3 font-black text-sm uppercase tracking-widest transition-all rounded-t-xl border-t-4 border-x-2 ${activeTab === "pet"
               ? "bg-base text-mauve border-t-mauve border-x-surface1 -mb-[2px] shadow-sm z-10"
               : "bg-surface0 text-subtext0 border-transparent hover:text-text hover:bg-surface1"
-          }`}
+            }`}
         >
           <Heart size={18} /> Pet
         </button>
         <button
           onClick={() => setActiveTab("shop")}
-          className={`flex items-center gap-2 px-6 py-3 font-black text-sm uppercase tracking-widest transition-all rounded-t-xl border-t-4 border-x-2 ${
-            activeTab === "shop"
+          className={`flex items-center gap-2 px-6 py-3 font-black text-sm uppercase tracking-widest transition-all rounded-t-xl border-t-4 border-x-2 ${activeTab === "shop"
               ? "bg-base text-green border-t-green border-x-surface1 -mb-[2px] shadow-sm z-10"
               : "bg-surface0 text-subtext0 border-transparent hover:text-text hover:bg-surface1"
-          }`}
+            }`}
         >
           <ShoppingBag size={18} /> Shop
         </button>
@@ -105,25 +102,24 @@ export default function DashboardPage() {
 
       {/* ─── Main Content Container ────────────────────────────────────────────── */}
       <div className="flex flex-1 overflow-hidden bg-base">
-        
+
         {/* Active Tab Area */}
         <div className="flex-1 flex flex-col min-w-0 relative">
-          
+
           {/* QUEST TAB */}
           {activeTab === "quest" && (
             <>
               {/* Column Filter Bar */}
-              <div className="bg-surface0 border-b border-surface1 px-6 py-2.5 flex items-center gap-4 overflow-x-auto custom-scrollbar shrink-0 shadow-sm z-10">
-                <span className="text-xs font-black text-subtext0 flex items-center gap-2 shrink-0">
-                  <Filter size={14} /> Kolom:
+              <div className="bg-surface0 border-b border-surface1 px-6 py-3 flex items-center gap-4 overflow-x-auto custom-scrollbar shrink-0 shadow-sm z-10">
+                <span className="text-sm font-black text-subtext0 flex items-center gap-2 shrink-0">
+                  <Filter size={16} /> Kolom:
                 </span>
                 <button
                   onClick={clearColumnFilter}
-                  className={`px-3 py-1 rounded-full text-[10px] font-black tracking-wide transition-all shrink-0 ${
-                    visibleColumns.length === 0
+                  className={`px-4 py-1.5 rounded-full text-xs font-black tracking-wide transition-all shrink-0 ${visibleColumns.length === 0
                       ? "bg-blue text-crust shadow-md"
                       : "bg-surface1 text-text border border-surface2 hover:border-blue/50"
-                  }`}
+                    }`}
                 >
                   Semua
                 </button>
@@ -131,26 +127,25 @@ export default function DashboardPage() {
                   <button
                     key={col}
                     onClick={() => toggleColumnVis(col)}
-                    className={`px-3 py-1 rounded-full text-[10px] font-black tracking-wide transition-all shrink-0 border border-transparent ${
-                      visibleColumns.includes(col)
+                    className={`px-4 py-1.5 rounded-full text-xs font-black tracking-wide transition-all shrink-0 border border-transparent ${visibleColumns.includes(col)
                         ? "bg-peach text-crust shadow-md"
-                        : "bg-surface1 text-text border-surface2 hover:border-peach/50"
-                    }`}
+                        : "bg-surface1 text-text border border-surface2 hover:border-peach/50"
+                      }`}
                   >
                     {col}
                   </button>
                 ))}
-                
+
                 <div className="h-6 w-px bg-surface2 mx-2" /> {/* Divider */}
 
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-black text-subtext0 flex items-center gap-1 shrink-0">
-                    <Filter size={14} /> Tag:
+                  <span className="text-sm font-black text-subtext0 flex items-center gap-1 shrink-0">
+                    <Filter size={16} /> Tag:
                   </span>
                   <select
                     value={activeTag}
                     onChange={(e) => setActiveTag(e.target.value)}
-                    className="bg-surface1 border border-surface2 rounded-xl px-3 py-1 text-[10px] font-bold w-[120px] focus:outline-none focus:border-blue transition-colors appearance-none cursor-pointer"
+                    className="bg-surface1 border border-surface2 rounded-xl px-4 py-1.5 text-xs font-bold w-[130px] focus:outline-none focus:border-blue transition-colors appearance-none cursor-pointer"
                   >
                     <option value="">Semua Tag</option>
                     {uniqueTags.map((tag) => (
@@ -160,19 +155,19 @@ export default function DashboardPage() {
                     ))}
                   </select>
                   {activeTag && (
-                    <button onClick={() => setActiveTag("")} className="text-[10px] text-red shrink-0 hover:underline">
-                      Clear
+                    <button onClick={() => setActiveTag("")} className="text-xs font-bold text-red shrink-0 hover:underline">
+                      Hapus Tag
                     </button>
                   )}
                 </div>
 
                 <div className="h-6 w-px bg-surface2 mx-1" /> {/* Divider */}
-                
+
                 <button
                   onClick={() => setIsAddingTask(true)}
-                  className="px-3 py-1 rounded-full text-[10px] font-black tracking-wide transition-all shrink-0 bg-green text-crust shadow-md hover:bg-teal border border-transparent flex items-center gap-1"
+                  className="px-4 py-1.5 rounded-full text-xs font-black tracking-wide transition-all shrink-0 bg-green text-crust shadow-md hover:bg-teal border border-transparent flex items-center gap-1"
                 >
-                  <Plus size={12} strokeWidth={3} /> Task
+                  <Plus size={14} strokeWidth={3} /> Task
                 </button>
               </div>
 
@@ -203,7 +198,7 @@ export default function DashboardPage() {
                           onComplete={completeTask}
                           onDelete={deleteTask}
                           onClearCompleted={clearCompleted}
-                          onRemoveColumn={() => {}}
+                          onRemoveColumn={() => { }}
                         />
                       );
                     })}
@@ -215,12 +210,13 @@ export default function DashboardPage() {
 
           {/* PET TAB */}
           {activeTab === "pet" && (
-            <PetTab 
+            <PetTab
               data={data}
               onClickShop={() => setActiveTab("shop")}
               onFeedPet={feedPet}
               isFeeding={isFeeding}
               onDeletePet={discardPet}
+              onRefresh={loadDashboard}
             />
           )}
 
@@ -233,7 +229,7 @@ export default function DashboardPage() {
 
         {/* ─── Right SIDEBAR: AI Assistant ──────────────────────────────────────── */}
         <div className={`relative shrink-0 flex transition-all duration-300 ${isAiOpen ? "w-[300px] md:w-[320px]" : "w-0"}`}>
-          
+
           {/* Toggle Button */}
           <button
             onClick={() => setIsAiOpen(!isAiOpen)}
@@ -242,11 +238,11 @@ export default function DashboardPage() {
           >
             {isAiOpen ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
           </button>
-          
+
           <div className="w-[300px] md:w-[320px] overflow-hidden">
-            <AIAssistantSidebar 
+            <AIAssistantSidebar
               boardColumns={boardColumns}
-              onTasksSaved={handleAIManualReload} 
+              onTasksSaved={handleAIManualReload}
             />
           </div>
         </div>

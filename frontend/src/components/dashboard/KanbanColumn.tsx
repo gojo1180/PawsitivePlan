@@ -89,7 +89,7 @@ export default function KanbanColumn({
 
             <AnimatePresence>
               {tasks.map((task, index) => (
-                <Draggable key={task.id} draggableId={task.id} index={index}>
+                <Draggable key={task.id} draggableId={task.id} index={index} isDragDisabled={isDoneCol}>
                   {(provided, snapshot) => (
                     <TaskCard
                       task={task}

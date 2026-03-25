@@ -167,6 +167,14 @@ export function useDashboard() {
         }),
       });
 
+      // Play add-task sound on successful creation
+      try {
+        const audio = new Audio("/asset/audio/Tambah_task.mp3");
+        audio.play();
+      } catch (e) {
+        console.error("Audio play failed:", e);
+      }
+
       setManualTask("");
       setManualReward(MIN_TASK_COINS);
       setManualDueDate("");
@@ -193,6 +201,13 @@ export function useDashboard() {
     const newCategory = destination.droppableId;
 
     if (newCategory === DONE_COLUMN && !draggedTask.is_completed) {
+      // Play confirmation sound instantly on drop
+      try {
+        const audio = new Audio("/asset/audio/confirmation_task.mp3");
+        audio.play();
+      } catch (e) {
+        console.error("Audio play failed:", e);
+      }
       completeTask(draggableId);
       return;
     }

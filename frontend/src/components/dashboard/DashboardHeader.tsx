@@ -21,30 +21,24 @@ export default function DashboardHeader({ data, onLogout }: DashboardHeaderProps
   return (
     <header className="bg-surface0 border-b-4 border-surface1 shadow-sm px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 z-20">
       <div className="flex items-center gap-6">
+        {/* App Name Section */}
+        <div className="flex items-center gap-2 pr-4 border-r-2 border-surface1">
+          <span className="text-2xl">🐾</span>
+          <div>
+            <h1 className="font-black text-lg text-mauve leading-none tracking-tight">PawsitivePlan</h1>
+            <p className="text-[10px] text-subtext0 font-bold leading-none mt-0.5">Gamified Productivity</p>
+          </div>
+        </div>
+
         <div className="flex flex-col gap-1">
           <h2 className="font-black text-xl text-mauve tracking-wide flex items-center gap-2">
             {profile.username}
-            <span className="text-[10px] bg-mauve/20 text-mauve px-2 py-1 rounded-md uppercase tracking-widest leading-none">
-              Lv. {pet.level} {pet.species}
-            </span>
           </h2>
-
           <div className="flex items-center gap-3 mt-1">
             {/* Coin balance */}
             <div className="flex items-center gap-2 bg-surface1 px-3 py-1.5 rounded-xl border-2 border-surface2">
               <Coins size={16} className="text-yellow" />
               <span className="font-black text-yellow text-sm leading-none">{profile.coins}</span>
-            </div>
-
-            {/* XP progress bar */}
-            <div className="flex items-center gap-2 bg-surface1 px-3 py-1.5 rounded-xl border-2 border-surface2 min-w-[120px]">
-              <Sparkles size={16} className="text-blue shrink-0" />
-              <div className="w-full bg-surface2 h-2.5 rounded-full overflow-hidden">
-                <div
-                  className="bg-blue h-full rounded-full transition-all duration-1000"
-                  style={{ width: `${xpPercent}%` }}
-                />
-              </div>
             </div>
           </div>
         </div>
