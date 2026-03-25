@@ -84,6 +84,8 @@ class ShopItemBase(BaseModel):
     type: str # e.g., 'food', 'accessory'
     price: int
     image_url: Optional[str] = None
+    description: Optional[str] = None
+    sprite_folder: Optional[str] = None
 
 class ShopItemCreate(ShopItemBase):
     pass
@@ -93,6 +95,8 @@ class ShopItemUpdate(BaseModel):
     type: Optional[str] = None
     price: Optional[int] = None
     image_url: Optional[str] = None
+    description: Optional[str] = None
+    sprite_folder: Optional[str] = None
 
 class ShopItemResponse(ShopItemBase):
     id: UUID

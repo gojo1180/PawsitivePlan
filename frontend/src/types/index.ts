@@ -29,6 +29,7 @@ export interface ShopItem {
   price: number;
   image_url: string;
   description?: string;
+  sprite_folder?: string;
 }
 
 export interface InventoryItem {

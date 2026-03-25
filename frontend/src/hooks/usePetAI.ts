@@ -53,17 +53,20 @@ export function usePetAI(pet: Pet) {
 
       if (isWeak && rand < 0.6) {
         setInternalState("sleep");
-      } else if (rand < 0.3) {
+      } else if (rand < 0.55) {
+        // 55% chance to walk — pet loves exploring!
         setInternalState("walk");
         setTimeout(() => {
           setInternalState((prev) => (prev === "walk" ? "idle" : prev));
-        }, 2000);
-      } else if (rand < 0.45) {
+        }, 3500);
+      } else if (rand < 0.70) {
+        // 15% chance to sleep
         setInternalState("sleep");
       } else {
+        // 30% chance to idle
         setInternalState("idle");
       }
-    }, 4000);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [pet, isHovered, animState]);
