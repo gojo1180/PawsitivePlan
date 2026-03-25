@@ -1,5 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from supabase import Client
+from datetime import datetime, timezone
+import math
 from ..database import get_supabase
 from ..dependencies import get_current_user
 
@@ -43,9 +45,46 @@ def get_my_pet(user_id: str = Depends(get_current_user), db: Client = Depends(ge
                 
         pet = pet_res.data[0]
 
-        # 2. Hydrate equipped items
+        # Calculate Tamagotchi Survival Drain
+        if not pet.get("is_dead") and pet.get("last_updated"):
+            try:
+                last_updated = datetime.fromisoformat(pet["last_updated"])
+                now = datetime.now(timezone.utc)
+                diff = now - last_updated
+                minutes_passed = diff.total_seconds() / 60.0
+
+                if minutes_passed >= 5: # Drain occurs every 5 minutes
+                    cycles = math.floor(minutes_passed / 5)
+                    new_hunger = max(0, pet.get("hunger", 100) - cycles * 2)
+                    new_thirst = max(0, pet.get("thirst", 100) - cycles * 3)
+                    new_health = pet.get("health", 100)
+                    
+                    if new_hunger == 0 or new_thirst == 0:
+                        starve_cycles = cycles
+                        new_health = max(0, new_health - starve_cycles * 5)
+                    
+                    is_dead = new_health == 0
+                    update_data = {
+                        "hunger": new_hunger,
+                        "thirst": new_thirst,
+                        "health": new_health,
+                        "is_dead": is_dead,
+                        "last_updated": now.isoformat()
+                    }
+                    db.table("pets").update(update_data).eq("id", pet["id"]).execute()
+                    pet.update(update_data)
+            except Exception as e:
+                print(f"Error calculating drain: {e}")
+                pass
+        elif not pet.get("last_updated"):
+            now = datetime.now(timezone.utc).isoformat()
+            db.table("pets").update({"last_updated": now, "health": 100, "hunger": 100, "thirst": 100}).eq("id", pet["id"]).execute()
+            pet["last_updated"] = now
+            pet["health"] = 100; pet["hunger"] = 100; pet["thirst"] = 100
+
+        # 2. Hydrate all inventory items
         # Join to shop_items to give frontend all the context needed for rendering (urls/names)
-        inv_res = db.table("user_inventory").select("*, shop_items(*)").eq("user_id", user_id).eq("is_equipped", True).execute()
+        inv_res = db.table("user_inventory").select("*, shop_items(*)").eq("user_id", user_id).execute()
         
         # 3. Get profile
         profile_res = db.table("profiles").select("*").eq("id", user_id).execute()
@@ -54,7 +93,7 @@ def get_my_pet(user_id: str = Depends(get_current_user), db: Client = Depends(ge
         return {
             "pet": pet,
             "profile": profile,
-            "equipped_items": inv_res.data
+            "inventory": inv_res.data
         }
     except HTTPException:
         raise
@@ -76,6 +115,52 @@ def equip_item(inventory_id: str, user_id: str = Depends(get_current_user), db: 
         db.table("user_inventory").update({"is_equipped": new_status}).eq("id", inventory_id).execute()
         
         return {"message": "Equipment visibility toggled successfully", "is_equipped": new_status}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.post("/feed/{inventory_id}")
+def feed_pet(inventory_id: str, user_id: str = Depends(get_current_user), db: Client = Depends(get_supabase)):
+    try:
+        inv_res = db.table("user_inventory").select("*, shop_items(*)").eq("id", inventory_id).eq("user_id", user_id).execute()
+        if not inv_res.data:
+            raise HTTPException(status_code=404, detail="Item not found in your inventory")
+            
+        inv_item = inv_res.data[0]
+        shop_item = inv_item.get("shop_items", {})
+        item_type = shop_item.get("type", "")
+        
+        if item_type not in ["food", "water", "consumable"]:
+            raise HTTPException(status_code=400, detail="This item is not consumable.")
+            
+        new_quantity = inv_item["quantity"] - 1
+        if new_quantity <= 0:
+            db.table("user_inventory").delete().eq("id", inventory_id).execute()
+        else:
+            db.table("user_inventory").update({"quantity": new_quantity}).eq("id", inventory_id).execute()
+            
+        pet_res = db.table("pets").select("*").eq("user_id", user_id).execute()
+        if not pet_res.data:
+            raise HTTPException(status_code=404, detail="Pet not found")
+            
+        pet = pet_res.data[0]
+        if pet.get("is_dead"):
+            raise HTTPException(status_code=400, detail="Peliharaan kamu sudah tiada. Tidak bisa makan lagi.")
+            
+        now = datetime.now(timezone.utc).isoformat()
+        update_data = {"last_updated": now}
+        
+        if item_type == "food" or item_type == "consumable":
+            update_data["hunger"] = min(100, pet.get("hunger", 100) + 30)
+            update_data["health"] = min(100, pet.get("health", 100) + 5)
+        elif item_type == "water":
+            update_data["thirst"] = min(100, pet.get("thirst", 100) + 40)
+            update_data["health"] = min(100, pet.get("health", 100) + 5)
+            
+        db.table("pets").update(update_data).eq("id", pet["id"]).execute()
+        
+        return {"message": f"Berhasil memberikan {shop_item.get('name')} kepada peliharaanmu", "pet_stats": update_data}
     except HTTPException:
         raise
     except Exception as e:

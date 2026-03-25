@@ -8,12 +8,38 @@ from pydantic import BaseModel
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
+import datetime
+
 @router.get("", response_model=List[TaskResponse])
 def get_tasks(user_id: str = Depends(get_current_user), db: Client = Depends(get_supabase)):
     try:
         # Retrieve all configured tasks for the active JWT session
         res = db.table("tasks").select("*").eq("user_id", user_id).execute()
-        return res.data
+        tasks = res.data
+
+        # Reset daily quests if completed on a previous day
+        today = datetime.datetime.now(datetime.timezone.utc).date()
+        for task in tasks:
+            if task.get("category") == "Daily Quest" and task.get("is_completed"):
+                last_completed_str = task.get("last_completed_at")
+                if last_completed_str:
+                    try:
+                        last_completed_dt = datetime.datetime.fromisoformat(last_completed_str.replace("Z", "+00:00"))
+                        if last_completed_dt.date() < today:
+                            # Reset in DB
+                            db.table("tasks").update({
+                                "is_completed": False, 
+                                "last_completed_at": None,
+                                "category": "Daily Quest"
+                            }).eq("id", task["id"]).execute()
+                            
+                            # Also reflect in returned memory object
+                            task["is_completed"] = False
+                            task["last_completed_at"] = None
+                    except ValueError:
+                        pass
+                        
+        return tasks
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -31,8 +57,11 @@ def create_task(task: TaskCreate, user_id: str = Depends(get_current_user), db: 
 @router.patch("/{task_id}/complete")
 def complete_task(task_id: str, user_id: str = Depends(get_current_user), db: Client = Depends(get_supabase)):
     try:
-        # 1. Update task to completed
-        task_res = db.table("tasks").update({"is_completed": True}).eq("id", task_id).eq("user_id", user_id).execute()
+        # 1. Update task to completed and log timestamp
+        task_res = db.table("tasks").update({
+            "is_completed": True,
+            "last_completed_at": datetime.datetime.now(datetime.timezone.utc).isoformat()
+        }).eq("id", task_id).eq("user_id", user_id).execute()
         if not task_res.data:
             raise HTTPException(status_code=404, detail="Task not found or is unauthorized.")
             
@@ -88,15 +117,3 @@ def update_task_generic(task_id: str, task: TaskUpdate, user_id: str = Depends(g
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-class ColumnsUpdate(BaseModel):
-    columns: List[str]
-
-@router.patch("/board/columns")
-def update_board_columns(req: ColumnsUpdate, user_id: str = Depends(get_current_user), db: Client = Depends(get_supabase)):
-    try:
-        res = db.table("profiles").update({"board_columns": req.columns}).eq("id", user_id).execute()
-        if not res.data:
-            raise HTTPException(status_code=404, detail="Profile not found")
-        return {"board_columns": res.data[0]["board_columns"]}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
