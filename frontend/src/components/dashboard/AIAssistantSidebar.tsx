@@ -26,10 +26,10 @@ export default function AIAssistantSidebar({ boardColumns, onTasksSaved }: AIAss
   const activeColumns = boardColumns.filter((c) => c !== DONE_COLUMN);
 
   return (
-    <div className="w-full h-full shrink-0 bg-surface0 border-l-4 border-surface1 flex flex-col relative z-40">
+    <div className="w-full h-full shrink-0 bg-surface0 border-l-4 border-surface2 flex flex-col relative z-40">
       {/* Header */}
-      <div className="px-4 py-4 border-b-2 border-surface1 flex justify-between items-center bg-surface0 shrink-0">
-        <h3 className="font-black text-blue flex items-center gap-2 text-lg">
+      <div className="px-4 py-4 border-b-4 border-surface1 flex justify-between items-center bg-surface0 shrink-0">
+        <h3 className="pixel-font text-[10px] text-blue flex items-center gap-2">
           <Sparkles size={20} /> AI Assitent
         </h3>
         <button className="text-subtext0 hover:text-text">
@@ -43,10 +43,10 @@ export default function AIAssistantSidebar({ boardColumns, onTasksSaved }: AIAss
           <div key={msg.id} className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}>
             {/* Bubble */}
             <div
-              className={`max-w-[85%] px-4 py-2 rounded-2xl border-2 font-medium text-sm shadow-sm ${
+              className={`max-w-[85%] px-4 py-2 rounded-lg border-2 font-bold text-sm ${
                 msg.role === "user"
-                  ? "bg-blue/10 border-blue text-text rounded-tr-sm"
-                  : "bg-surface1 border-surface2 text-text rounded-tl-sm"
+                  ? "bg-blue/10 border-blue text-text pixel-shadow"
+                  : "bg-surface1 border-surface2 text-text pixel-shadow"
               }`}
             >
               {msg.text}
@@ -54,7 +54,7 @@ export default function AIAssistantSidebar({ boardColumns, onTasksSaved }: AIAss
 
             {/* Task list if any */}
             {msg.tasks && msg.tasks.length > 0 && (
-              <div className="w-full mt-3 bg-base border-2 border-surface2 rounded-xl p-3 flex flex-col gap-3 shadow-inner">
+              <div className="w-full mt-3 bg-base border-2 border-surface2 rounded-lg p-3 flex flex-col gap-3 pixel-shadow">
                 <AnimatePresence>
                   {msg.tasks.map((t, idx) => (
                     <motion.div
@@ -62,7 +62,7 @@ export default function AIAssistantSidebar({ boardColumns, onTasksSaved }: AIAss
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.9 }}
-                      className="bg-surface1 p-3 rounded-lg border border-surface2 shadow-sm relative group"
+                      className="bg-surface1 p-3 rounded-lg border-2 border-surface2 relative group pixel-shadow"
                     >
                       <button
                         onClick={() => {
@@ -71,7 +71,7 @@ export default function AIAssistantSidebar({ boardColumns, onTasksSaved }: AIAss
                           } catch (e) { console.error("Audio play failed:", e); }
                           handleRemoveTask(msg.id, idx);
                         }}
-                        className="absolute -top-2 -right-2 bg-red text-crust p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:scale-110"
+                        className="absolute -top-2 -right-2 bg-red text-crust p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity border-2 border-surface0 hover:scale-110"
                       >
                         <X size={12} />
                       </button>
@@ -119,7 +119,7 @@ export default function AIAssistantSidebar({ boardColumns, onTasksSaved }: AIAss
                     } catch (e) { console.error("Audio play failed:", e); }
                     handleSaveTasks(msg.id);
                   }}
-                  className="w-full bg-green text-crust font-black py-2 rounded-lg mt-2 flex justify-center items-center gap-2 border-b-4 border-teal active:border-b-0 active:translate-y-1 transition-all"
+                  className="w-full bg-green text-crust font-black py-2 rounded-lg mt-2 flex justify-center items-center gap-2 border-2 border-teal border-b-4 active:border-b-2 active:translate-y-[1px] transition-all uppercase tracking-wider"
                 >
                   <Check size={16} /> Setuju
                 </button>
@@ -130,7 +130,7 @@ export default function AIAssistantSidebar({ boardColumns, onTasksSaved }: AIAss
 
         {generating && (
           <div className="flex justify-start">
-            <div className="bg-surface1 border-2 border-surface2 px-4 py-2 rounded-2xl rounded-tl-sm text-subtext0 flex gap-1">
+            <div className="bg-surface1 border-2 border-surface2 px-4 py-2 rounded-lg text-subtext0 flex gap-1 pixel-shadow">
               <span className="animate-bounce">.</span>
               <span className="animate-bounce" style={{ animationDelay: "0.2s" }}>.</span>
               <span className="animate-bounce" style={{ animationDelay: "0.4s" }}>.</span>
@@ -149,12 +149,12 @@ export default function AIAssistantSidebar({ boardColumns, onTasksSaved }: AIAss
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
             placeholder="saya ingin ...."
-            className="flex-1 bg-base border-2 border-surface2 focus:border-blue focus:outline-none rounded-xl px-4 py-2 text-sm font-medium transition-colors"
+            className="flex-1 bg-base border-2 border-surface2 focus:border-blue focus:outline-none rounded-lg px-4 py-2 text-sm font-bold transition-colors"
           />
           <button
             onClick={handleSend}
             disabled={!input.trim() || generating}
-            className="bg-blue hover:bg-sapphire text-crust p-3 rounded-xl disabled:opacity-50 transition-all active:scale-95 border-b-4 border-sapphire active:border-b-0"
+            className="bg-blue hover:bg-sapphire text-crust p-3 rounded-lg disabled:opacity-50 transition-all active:scale-95 border-2 border-sapphire border-b-4 active:border-b-2"
           >
             <Send size={18} />
           </button>

@@ -53,7 +53,7 @@ export default function AddTaskModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20, pointerEvents: "none" }}
             onSubmit={onSubmit}
-            className="bg-surface0 border-4 border-surface1 shadow-[0_20px_50px_rgb(0,0,0,0.6)] p-6 rounded-3xl flex flex-col gap-4 w-[320px]"
+            className="bg-surface0 border-4 border-surface1 pixel-shadow-lg p-6 rounded-xl flex flex-col gap-4 w-[320px]"
           >
             {/* Modal header */}
             <div className="flex justify-between items-center border-b-2 border-surface1 pb-3">
@@ -61,7 +61,7 @@ export default function AddTaskModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="text-subtext0 hover:text-red hover:rotate-90 transition-all p-1 bg-surface1 rounded-full"
+                className="text-subtext0 hover:text-red hover:rotate-90 transition-all p-1 bg-surface1 rounded-md"
                 aria-label="Close form"
               >
                 <X size={18} />
@@ -79,7 +79,7 @@ export default function AddTaskModal({
                 value={manualTask}
                 onChange={(e) => onTaskChange(e.target.value)}
                 placeholder="Msl: Mengerjakan jurnal..."
-                className="bg-base border-2 border-surface2 rounded-xl px-4 py-3 focus:border-green focus:outline-none text-sm font-bold text-text transition-colors"
+                className="bg-base border-2 border-surface2 rounded-lg px-4 py-3 focus:border-green focus:outline-none text-sm font-bold text-text transition-colors"
               />
             </div>
 
@@ -91,7 +91,7 @@ export default function AddTaskModal({
               <select
                 value={manualCategory}
                 onChange={(e) => onCategoryChange(e.target.value)}
-                className="w-full bg-base border-2 border-surface2 rounded-xl px-4 py-3 focus:border-blue focus:outline-none text-sm font-bold text-blue cursor-pointer transition-colors appearance-none"
+                className="w-full bg-base border-2 border-surface2 rounded-lg px-4 py-3 focus:border-blue focus:outline-none text-sm font-bold text-blue cursor-pointer transition-colors appearance-none"
               >
                 {availableColumns.map((c) => (
                   <option key={c} value={c}>
@@ -113,7 +113,7 @@ export default function AddTaskModal({
                   value={manualTags}
                   onChange={(e) => onTagsChange(e.target.value)}
                   placeholder="Msl: Belajar, Penting"
-                  className="w-full bg-base border-2 border-surface2 rounded-xl py-3 pl-9 pr-2 focus:border-mauve focus:outline-none text-sm font-bold text-text transition-colors"
+                  className="w-full bg-base border-2 border-surface2 rounded-lg py-3 pl-9 pr-2 focus:border-mauve focus:outline-none text-sm font-bold text-text transition-colors"
                 />
               </div>
             </div>
@@ -131,7 +131,7 @@ export default function AddTaskModal({
                       type="date"
                       value={manualDueDate}
                       onChange={(e) => onDueDateChange(e.target.value)}
-                      className="w-full bg-base border-2 border-surface2 rounded-xl pl-9 pr-3 py-3 focus:border-peach focus:outline-none text-sm text-subtext0 font-bold transition-colors cursor-pointer"
+                      className="w-full bg-base border-2 border-surface2 rounded-lg pl-9 pr-3 py-3 focus:border-peach focus:outline-none text-sm text-subtext0 font-bold transition-colors cursor-pointer"
                     />
                   </div>
                 </div>
@@ -151,7 +151,7 @@ export default function AddTaskModal({
                     max={MAX_TASK_COINS}
                     value={manualReward}
                     onChange={(e) => onRewardChange(parseInt(e.target.value) || MIN_TASK_COINS)}
-                    className="w-full bg-yellow/10 border-2 border-yellow/20 rounded-xl py-3 pl-9 pr-2 focus:border-yellow focus:outline-none text-sm font-black text-yellow text-right transition-colors"
+                    className="w-full bg-yellow/10 border-2 border-yellow/20 rounded-lg py-3 pl-9 pr-2 focus:border-yellow focus:outline-none text-sm font-black text-yellow text-right transition-colors"
                   />
                 </div>
               </div>
@@ -162,7 +162,7 @@ export default function AddTaskModal({
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               type="submit"
-              className="w-full bg-green hover:bg-teal text-crust font-black py-3.5 rounded-xl mt-2 border-b-4 border-teal active:translate-y-1 active:border-b-0 flex items-center justify-center gap-2 shadow-sm transition-all"
+              className="w-full bg-green hover:bg-teal text-crust font-black py-3.5 rounded-lg mt-2 border-2 border-teal border-b-4 active:translate-y-[1px] active:border-b-2 flex items-center justify-center gap-2 transition-all uppercase tracking-wider"
             >
               <Plus size={20} strokeWidth={3} /> Tambah!
             </motion.button>

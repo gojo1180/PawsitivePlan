@@ -1,37 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 @import "tailwindcss";
 
 @theme {
-  /* Catppuccin Mocha Custom Color Palette */
-  --color-rosewater: #f5e0dc;
-  --color-flamingo: #f2cdcd;
-  --color-pink: #f5c2e7;
-  --color-mauve: #cba6f7;
-  --color-red: #f38ba8;
-  --color-maroon: #eba0ac;
-  --color-peach: #fab387;
-  --color-yellow: #f9e2af;
-  --color-green: #a6e3a1;
-  --color-teal: #94e2d5;
-  --color-sky: #89dceb;
-  --color-sapphire: #74c7ec;
-  --color-blue: #89b4fa;
-  --color-lavender: #b4befe;
+  /* Cozy Sunset Cafe Light Palette */
+  --color-rosewater: #f4b8b8;
+  --color-flamingo: #e8998d;
+  --color-pink: #d58eb4;
+  --color-mauve: #c16e70; /* warm brick */
+  --color-red: #d95d5d;
+  --color-maroon: #a25a55; /* dark shade */
+  --color-peach: #e28160; /* cafe door/rust */
+  --color-yellow: #f1bd6c; /* sunny accent */
+  --color-green: #89b389; /* plant green */
+  --color-teal: #689d8d;
+  --color-sky: #8ab6d6;
+  --color-sapphire: #5e8bb7;
+  --color-blue: #6ca0cf; /* glass window */
+  --color-lavender: #8d9cc1;
   
-  --color-text: #cdd6f4;
-  --color-subtext1: #bac2de;
-  --color-subtext0: #a6adc8;
+  /* Light Mode Base - Warm Cream */
+  --color-text: #3d314a; /* shadowy purple */
+  --color-subtext1: #6b5a74;
+  --color-subtext0: #8f7d98;
   
-  --color-overlay2: #9399b2;
-  --color-overlay1: #7f849c;
-  --color-overlay0: #6c7086;
+  --color-overlay2: #a897b0;
+  --color-overlay1: #c5b5cc;
+  --color-overlay0: #d6ccda;
   
-  --color-surface2: #585b70;
-  --color-surface1: #45475a;
-  --color-surface0: #313244;
+  --color-surface2: #e3d5ca; /* warm border */
+  --color-surface1: #f0e6dd; /* secondary hover surface */
+  --color-surface0: #ffffff; /* main card surface (pure white for contrast) */
   
-  --color-base: #1e1e2e;
-  --color-mantle: #181825;
-  --color-crust: #11111b;
+  --color-base: #f5f0eb; /* application background (soft sand) */
+  --color-mantle: #f0ebe4;
+  --color-crust: #e8ded4;
 
   --color-background: var(--color-base);
   --color-foreground: var(--color-text);
@@ -41,6 +43,7 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: 'Arial', sans-serif;
     @apply antialiased;
   }
 }
@@ -50,17 +53,85 @@
     width: 6px;
     height: 6px;
   }
+
   .custom-scrollbar::-webkit-scrollbar-track {
     background: transparent;
   }
+
   .custom-scrollbar::-webkit-scrollbar-thumb {
     background-color: var(--color-surface2);
     border-radius: 10px;
   }
+
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background-color: var(--color-overlay0);
   }
+
   .pixelated {
     image-rendering: pixelated;
+  }
+
+  /* ── Pixel Font ── */
+  .pixel-font {
+    font-family: 'Press Start 2P', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Pixel Shadows ── */
+  .pixel-shadow {
+    box-shadow: 3px 3px 0px var(--color-surface2);
+  }
+
+  .pixel-shadow-lg {
+    box-shadow: 4px 4px 0px var(--color-surface2);
+  }
+
+  .pixel-shadow-peach {
+    box-shadow: 3px 3px 0px var(--color-peach);
+  }
+
+  .pixel-shadow-green {
+    box-shadow: 3px 3px 0px var(--color-green);
+  }
+
+  .pixel-shadow-blue {
+    box-shadow: 3px 3px 0px var(--color-blue);
+  }
+
+  .pixel-shadow-mauve {
+    box-shadow: 3px 3px 0px var(--color-mauve);
+  }
+
+  /* ── Pixel Button (press-down effect) ── */
+  .pixel-btn {
+    border-bottom-width: 4px;
+    transition: all 0.1s;
+  }
+  .pixel-btn:active {
+    border-bottom-width: 2px;
+    transform: translateY(2px);
+  }
+
+  /* ── Pixel Border Decoration (top accent) ── */
+  .pixel-border-top {
+    border-top: 4px solid var(--color-peach);
+    position: relative;
+  }
+  .pixel-border-top::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 4px;
+    right: 4px;
+    height: 4px;
+    background: var(--color-yellow);
+    opacity: 0.5;
+  }
+
+  /* ── Stepped pixel shadow (retro depth) ── */
+  .pixel-shadow-stepped {
+    box-shadow:
+      2px 2px 0px var(--color-surface2),
+      4px 4px 0px var(--color-crust);
   }
 }

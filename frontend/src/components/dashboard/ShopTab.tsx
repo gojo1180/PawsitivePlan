@@ -24,7 +24,7 @@ export default function ShopTab() {
     <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-12">
       {/* ── Market Section ── */}
       <section aria-label="Market">
-        <h2 className="text-2xl font-black text-green mb-6 flex items-center gap-2 drop-shadow-sm">
+        <h2 className="pixel-font text-sm text-green mb-6 flex items-center gap-2">
           <ShoppingBag size={28} /> Market
         </h2>
         <motion.div
@@ -37,9 +37,9 @@ export default function ShopTab() {
             <motion.div
               variants={itemVariants}
               key={item.id}
-              className="bg-surface0 rounded-3xl border-2 border-surface1 p-4 shadow-sm flex flex-col items-center group relative hover:border-green hover:shadow-xl transition-all"
+              className="bg-surface0 rounded-xl border-2 border-surface1 p-4 pixel-shadow-stepped flex flex-col items-center group relative hover:border-green hover:-translate-y-1 transition-all"
             >
-              <div className="w-full aspect-square bg-surface1 rounded-2xl mb-4 p-4 border-2 border-dashed border-surface2 relative overflow-hidden flex items-center justify-center group-hover:border-green transition-colors">
+              <div className="w-full aspect-square bg-surface1 rounded-lg mb-4 p-4 border-2 border-dashed border-surface2 relative overflow-hidden flex items-center justify-center group-hover:border-green transition-colors">
                 <img
                   src={item.image_url}
                   alt={item.name}
@@ -57,7 +57,7 @@ export default function ShopTab() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => handleBuy(item.id)}
-                  className="w-full bg-green hover:bg-teal text-crust font-black py-2 rounded-xl shadow-md border-b-4 border-teal active:border-b-0 active:translate-y-1 flex justify-center items-center gap-1 text-sm transition-all"
+                  className="w-full bg-green hover:bg-teal text-crust font-black py-2 rounded-lg border-2 border-teal border-b-4 active:border-b-2 active:translate-y-[1px] flex justify-center items-center gap-1 text-sm transition-all uppercase tracking-wider"
                 >
                   <Coins size={14} /> {item.price}
                 </motion.button>
@@ -69,12 +69,12 @@ export default function ShopTab() {
 
       {/* ── Inventory Section ── */}
       <section aria-label="My Inventory">
-        <h2 className="text-2xl font-black text-mauve mb-6 flex items-center gap-2 drop-shadow-sm">
+        <h2 className="pixel-font text-sm text-mauve mb-6 flex items-center gap-2">
           <Backpack size={28} /> My Inventory
         </h2>
         {inventory.length === 0 ? (
-          <div className="text-center py-16 text-subtext0 bg-surface0 rounded-3xl border-2 border-dashed border-surface1 shadow-inner">
-            <p className="font-medium text-xl mb-2">Your backpack is empty!</p>
+          <div className="text-center py-16 text-subtext0 bg-surface0 rounded-xl border-2 border-dashed border-surface1 pixel-shadow">
+            <p className="font-black text-xl mb-2">Your backpack is empty!</p>
             <p className="text-sm">Buy some cool cosmetics from the market above.</p>
           </div>
         ) : (
@@ -93,17 +93,17 @@ export default function ShopTab() {
                     variants={itemVariants}
                     key={inv.id}
                     exit={{ opacity: 0, scale: 0.5 }}
-                    className="bg-surface0 rounded-3xl border-2 border-surface1 p-4 shadow-sm flex flex-col items-center group relative overflow-hidden border-t-4 border-t-mauve hover:shadow-xl transition-all"
+                    className="bg-surface0 rounded-xl border-2 border-surface1 p-4 pixel-shadow-stepped flex flex-col items-center group relative overflow-hidden border-t-4 border-t-mauve hover:-translate-y-1 transition-all"
                   >
                     {isEquipped && (
                       <div
-                        className="absolute top-2 right-2 bg-blue text-crust p-1.5 rounded-full z-10 shadow-lg border-2 border-surface0"
+                        className="absolute top-2 right-2 bg-blue text-crust p-1.5 rounded-md z-10 border-2 border-surface0"
                         title="Equipped!"
                       >
                         <Check size={16} strokeWidth={4} />
                       </div>
                     )}
-                    <div className="w-full aspect-square bg-gradient-to-br from-surface1 to-surface0 rounded-2xl mb-4 p-4 border-2 border-dashed border-surface2 relative flex items-center justify-center">
+                    <div className="w-full aspect-square bg-gradient-to-br from-surface1 to-surface0 rounded-lg mb-4 p-4 border-2 border-dashed border-surface2 relative flex items-center justify-center">
                       <img
                         src={item.image_url}
                         alt={item.name}
@@ -114,7 +114,7 @@ export default function ShopTab() {
                     </div>
                     <div className="flex justify-between w-full items-center mb-3">
                       <h3 className="font-bold text-text text-sm truncate mr-2">{item.name}</h3>
-                      <span className="text-xs font-black bg-surface2 px-2 py-1 rounded-md text-subtext1 border border-surface1 shrink-0">
+                      <span className="text-xs font-black bg-surface2 px-2 py-1 rounded-md text-subtext1 border-2 border-surface1 shrink-0">
                         x{inv.quantity}
                       </span>
                     </div>
@@ -123,11 +123,10 @@ export default function ShopTab() {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => handleToggleEquip(inv.id)}
-                        className={`w-full font-black py-2 rounded-xl shadow-md flex justify-center items-center gap-1 transition-all text-sm ${
-                          isEquipped
-                            ? "bg-surface2 text-text border-2 border-surface1 hover:bg-surface1"
-                            : "bg-blue hover:bg-sapphire text-crust border-b-4 border-sapphire active:border-b-0 active:translate-y-1"
-                        }`}
+                        className={`w-full font-black py-2 rounded-lg flex justify-center items-center gap-1 transition-all text-sm uppercase tracking-wider border-2 ${isEquipped
+                            ? "bg-surface2 text-text border-surface1 hover:bg-surface1"
+                            : "bg-blue hover:bg-sapphire text-crust border-sapphire border-b-4 active:border-b-2 active:translate-y-[1px]"
+                          }`}
                       >
                         {isEquipped ? "Unequip" : <><Sparkles size={14} /> Equip</>}
                       </motion.button>

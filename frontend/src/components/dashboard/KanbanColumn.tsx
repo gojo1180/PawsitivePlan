@@ -35,11 +35,11 @@ export default function KanbanColumn({
       {/* Column header */}
       <div className="flex items-center justify-between mb-3 border-b-2 border-surface1 pb-2">
         <div className="flex items-center gap-2">
-          <h3 className={`text-xl font-black flex items-center gap-2 ${isDoneCol ? "text-green" : "text-peach"}`}>
-            {isDoneCol ? <CheckCircle size={20} /> : <PenLine size={20} />}
+          <h3 className={`pixel-font text-[10px] flex items-center gap-2 uppercase ${isDoneCol ? "text-green" : "text-peach"}`}>
+            {isDoneCol ? <CheckCircle size={18} /> : <PenLine size={18} />}
             {colName}
           </h3>
-          <span className={`text-crust font-black text-xs px-2 py-0.5 rounded-full ${isDoneCol ? "bg-green" : "bg-peach"}`}>
+          <span className={`text-xs font-black px-2.5 py-0.5 rounded-md border-2 ${isDoneCol ? "bg-green/15 text-green border-green/30" : "bg-peach/15 text-peach border-peach/30"}`}>
             {tasks.length}
           </span>
         </div>
@@ -58,7 +58,7 @@ export default function KanbanColumn({
           {isDoneCol && tasks.length > 0 && (
             <button
               onClick={onClearCompleted}
-              className="text-xs font-bold text-red flex items-center gap-1 hover:bg-red/10 px-2 py-1 rounded-lg"
+              className="text-xs font-bold text-red flex items-center gap-1 hover:bg-red/10 px-2 py-1 rounded-lg transition-colors border border-red/20"
             >
               <Trash2 size={14} /> Clear All
             </button>
@@ -72,18 +72,17 @@ export default function KanbanColumn({
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className={`border-2 rounded-2xl p-4 flex-1 overflow-y-auto space-y-3 shadow-sm custom-scrollbar transition-colors ${
-              snapshot.isDraggingOver
-                ? "bg-surface1/50 border-peach"
+            className={`border-2 rounded-xl p-4 flex-1 overflow-y-auto space-y-3 custom-scrollbar transition-all ${snapshot.isDraggingOver
+                ? "bg-surface1/40 border-peach pixel-shadow-peach"
                 : isDoneCol
-                ? "bg-surface0/60 border-surface1"
-                : "bg-surface0 border-surface1"
-            }`}
+                  ? "bg-surface0/60 border-surface1"
+                  : "bg-surface0 border-surface1 pixel-shadow-stepped"
+              }`}
             style={{ minHeight: "200px" }}
           >
             {tasks.length === 0 && !snapshot.isDraggingOver && (
-              <div className="text-center py-10 text-subtext0 bg-base rounded-xl border-2 border-dashed border-surface2">
-                <p className="font-bold">{isDoneCol ? "Belum ada yang selesai." : "Kosong."}</p>
+              <div className="text-center py-10 text-subtext0 bg-base rounded-lg border-2 border-dashed border-surface2">
+                <p className="font-bold text-sm">{isDoneCol ? "Belum ada yang selesai." : "Kosong."}</p>
               </div>
             )}
 

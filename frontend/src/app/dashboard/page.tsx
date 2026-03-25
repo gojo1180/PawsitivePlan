@@ -70,30 +70,30 @@ export default function DashboardPage() {
       />
 
       {/* ─── Tabs Bar ───────────────────────────────────────────────────────────── */}
-      <div className="border-b-2 border-surface1 bg-surface0 px-6 shrink-0 flex gap-1 z-20 shadow-sm relative z-30">
+      <div className="bg-surface0 border-b-4 border-surface2 px-6 py-2 shrink-0 flex gap-2 sm:gap-3 z-30">
         <button
           onClick={() => setActiveTab("quest")}
-          className={`flex items-center gap-2 px-6 py-3 font-black text-sm uppercase tracking-widest transition-all rounded-t-xl border-t-4 border-x-2 ${activeTab === "quest"
-              ? "bg-base text-blue border-t-blue border-x-surface1 -mb-[2px] shadow-sm z-10"
-              : "bg-surface0 text-subtext0 border-transparent hover:text-text hover:bg-surface1"
+          className={`flex items-center gap-2 px-5 py-2.5 pixel-font text-[10px] uppercase transition-all rounded-lg border-2 ${activeTab === "quest"
+              ? "bg-blue/15 text-blue border-blue/30 pixel-shadow-blue"
+              : "text-subtext0 border-transparent hover:text-text hover:bg-surface1/50 hover:border-surface2"
             }`}
         >
           <Target size={18} /> Quest
         </button>
         <button
           onClick={() => setActiveTab("pet")}
-          className={`flex items-center gap-2 px-6 py-3 font-black text-sm uppercase tracking-widest transition-all rounded-t-xl border-t-4 border-x-2 ${activeTab === "pet"
-              ? "bg-base text-mauve border-t-mauve border-x-surface1 -mb-[2px] shadow-sm z-10"
-              : "bg-surface0 text-subtext0 border-transparent hover:text-text hover:bg-surface1"
+          className={`flex items-center gap-2 px-5 py-2.5 pixel-font text-[10px] uppercase transition-all rounded-lg border-2 ${activeTab === "pet"
+              ? "bg-mauve/15 text-mauve border-mauve/30 pixel-shadow-mauve"
+              : "text-subtext0 border-transparent hover:text-text hover:bg-surface1/50 hover:border-surface2"
             }`}
         >
           <Heart size={18} /> Pet
         </button>
         <button
           onClick={() => setActiveTab("shop")}
-          className={`flex items-center gap-2 px-6 py-3 font-black text-sm uppercase tracking-widest transition-all rounded-t-xl border-t-4 border-x-2 ${activeTab === "shop"
-              ? "bg-base text-green border-t-green border-x-surface1 -mb-[2px] shadow-sm z-10"
-              : "bg-surface0 text-subtext0 border-transparent hover:text-text hover:bg-surface1"
+          className={`flex items-center gap-2 px-5 py-2.5 pixel-font text-[10px] uppercase transition-all rounded-lg border-2 ${activeTab === "shop"
+              ? "bg-green/15 text-green border-green/30 pixel-shadow-green"
+              : "text-subtext0 border-transparent hover:text-text hover:bg-surface1/50 hover:border-surface2"
             }`}
         >
           <ShoppingBag size={18} /> Shop
@@ -110,15 +110,15 @@ export default function DashboardPage() {
           {activeTab === "quest" && (
             <>
               {/* Column Filter Bar */}
-              <div className="bg-surface0 border-b border-surface1 px-6 py-3 flex items-center gap-4 overflow-x-auto custom-scrollbar shrink-0 shadow-sm z-10">
-                <span className="text-sm font-black text-subtext0 flex items-center gap-2 shrink-0">
+              <div className="bg-surface0 border-b-2 border-surface1 px-6 py-3 flex items-center gap-3 overflow-x-auto custom-scrollbar shrink-0 z-10">
+                <span className="text-sm font-black text-subtext0 flex items-center gap-2 shrink-0 uppercase tracking-wider">
                   <Filter size={16} /> Kolom:
                 </span>
                 <button
                   onClick={clearColumnFilter}
-                  className={`px-4 py-1.5 rounded-full text-xs font-black tracking-wide transition-all shrink-0 ${visibleColumns.length === 0
-                      ? "bg-blue text-crust shadow-md"
-                      : "bg-surface1 text-text border border-surface2 hover:border-blue/50"
+                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 border-2 ${visibleColumns.length === 0
+                      ? "bg-text text-base border-text pixel-shadow"
+                      : "bg-surface1 text-subtext0 border-surface2 hover:border-text/30"
                     }`}
                 >
                   Semua
@@ -127,9 +127,9 @@ export default function DashboardPage() {
                   <button
                     key={col}
                     onClick={() => toggleColumnVis(col)}
-                    className={`px-4 py-1.5 rounded-full text-xs font-black tracking-wide transition-all shrink-0 border border-transparent ${visibleColumns.includes(col)
-                        ? "bg-peach text-crust shadow-md"
-                        : "bg-surface1 text-text border border-surface2 hover:border-peach/50"
+                    className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 border-2 ${visibleColumns.includes(col)
+                        ? "bg-peach/15 text-peach border-peach/30 pixel-shadow"
+                        : "bg-surface1 text-subtext0 border-surface2 hover:border-peach/30"
                       }`}
                   >
                     {col}
@@ -139,13 +139,13 @@ export default function DashboardPage() {
                 <div className="h-6 w-px bg-surface2 mx-2" /> {/* Divider */}
 
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-black text-subtext0 flex items-center gap-1 shrink-0">
+                  <span className="text-sm font-black text-subtext0 flex items-center gap-1 shrink-0 uppercase tracking-wider">
                     <Filter size={16} /> Tag:
                   </span>
                   <select
                     value={activeTag}
                     onChange={(e) => setActiveTag(e.target.value)}
-                    className="bg-surface1 border border-surface2 rounded-xl px-4 py-1.5 text-xs font-bold w-[130px] focus:outline-none focus:border-blue transition-colors appearance-none cursor-pointer"
+                    className="bg-surface1 border-2 border-surface2 rounded-lg px-4 py-1.5 text-xs font-bold w-[130px] focus:outline-none focus:border-blue transition-colors appearance-none cursor-pointer"
                   >
                     <option value="">Semua Tag</option>
                     {uniqueTags.map((tag) => (
@@ -165,7 +165,7 @@ export default function DashboardPage() {
 
                 <button
                   onClick={() => setIsAddingTask(true)}
-                  className="px-4 py-1.5 rounded-full text-xs font-black tracking-wide transition-all shrink-0 bg-green text-crust shadow-md hover:bg-teal border border-transparent flex items-center gap-1"
+                  className="px-5 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all shrink-0 bg-green text-crust border-2 border-teal border-b-4 active:border-b-2 active:translate-y-[1px] flex items-center gap-1"
                 >
                   <Plus size={14} strokeWidth={3} /> Task
                 </button>

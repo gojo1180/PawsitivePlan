@@ -53,10 +53,10 @@ export default function TaskCard({
     <div
       ref={provided.innerRef}
       {...provided.draggableProps}
-      className={`flex flex-col bg-surface1 p-4 rounded-xl border-2 hover:border-peach transition-colors group shadow-sm gap-3 ${
+      className={`flex flex-col bg-surface0 p-4 rounded-lg border-2 hover:border-peach transition-all group gap-3 pixel-border-top ${
         snapshot.isDragging
-          ? "border-peach shadow-xl ring-2 ring-peach/50"
-          : "border-surface2"
+          ? "border-peach pixel-shadow-peach ring-2 ring-peach/30"
+          : "border-surface2 pixel-shadow-stepped"
       }`}
       style={{ ...provided.draggableProps.style, opacity: isDoneCol ? 0.7 : 1 }}
     >
@@ -73,7 +73,7 @@ export default function TaskCard({
             </h4>
             <div className="flex flex-col gap-1 mt-1">
               {task.due_date && (
-                <div className="flex items-center gap-1 text-[10px] text-maroon font-black uppercase">
+                <div className="flex items-center gap-1 text-[10px] text-maroon font-black uppercase tracking-wider">
                   <CalendarDays size={12} />
                   {format(new Date(task.due_date), "dd MMM")}
                 </div>
@@ -81,7 +81,7 @@ export default function TaskCard({
               {task.tags && task.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-1">
                   {task.tags.map((tag, i) => (
-                    <span key={i} className="px-1.5 py-0.5 bg-surface2 text-text rounded text-[9px] font-bold tracking-wide uppercase">
+                    <span key={i} className="px-2 py-0.5 bg-surface1 text-subtext0 rounded-md border border-surface2 text-[10px] font-bold tracking-wide uppercase">
                       {tag}
                     </span>
                   ))}
@@ -115,7 +115,7 @@ export default function TaskCard({
       {/* Footer: badge + coins */}
       <div className="flex items-center justify-between mt-auto pt-2 border-t border-surface2">
         {task.is_ai_generated ? (
-          <span className="text-[10px] uppercase font-black bg-blue/10 text-blue px-2 py-0.5 rounded border border-blue/20">
+          <span className="text-[10px] uppercase font-black bg-blue/10 text-blue px-2 py-0.5 rounded-md border border-blue/20">
             AI Generated
           </span>
         ) : (
