@@ -15,12 +15,12 @@ interface AnimatedPetProps {
 
 export default function AnimatedPet({ pet, equippedItems, onClickShop, onDeletePet }: AnimatedPetProps) {
   const { animState, setIsHovered, interact, chatMessage } = usePetAI(pet);
-  
+
   const [frame, setFrame] = useState(1);
   const frameRef = useRef(1);
   const lastUpdateRef = useRef(0);
   const reqRef = useRef<number>(0);
-  
+
   const spriteRef = useRef<HTMLDivElement>(null);
   const [facingRight, setFacingRight] = useState(true);
   const x = useMotionValue(0);
@@ -31,7 +31,7 @@ export default function AnimatedPet({ pet, equippedItems, onClickShop, onDeleteP
   const isKucing = pet.species.toLowerCase() === "kucing";
   const fps = 8; // Target 8 frames per second
   const frameInterval = 1000 / fps;
-  
+
   const isIdleLoop = animState === "idle" || animState === "sleep" || animState === "dead" || animState === "happy" || animState === "eating";
   const maxFrames = isIdleLoop ? 8 : 12;
 
@@ -50,7 +50,7 @@ export default function AnimatedPet({ pet, equippedItems, onClickShop, onDeleteP
 
       if (deltaTime > frameInterval) {
         lastUpdateRef.current = time - (deltaTime % frameInterval); // Preserve fractional time
-        
+
         // Stop animation completely if dead
         if (animState === "dead") {
           frameRef.current = 1;
@@ -58,7 +58,7 @@ export default function AnimatedPet({ pet, equippedItems, onClickShop, onDeleteP
         } else {
           let nextFrame = frameRef.current + 1;
           if (nextFrame > maxFrames) {
-            nextFrame = 1; 
+            nextFrame = 1;
           }
           frameRef.current = nextFrame;
           setFrame(nextFrame);
@@ -81,14 +81,14 @@ export default function AnimatedPet({ pet, equippedItems, onClickShop, onDeleteP
       const currentX = x.get();
       const screenWidth = typeof window !== "undefined" ? window.innerWidth : 1000;
       const globalLeft = rect.left;
-      
+
       let targetMove = Math.random() * 400 - 200; // Wander distance
-      
+
       // Clamp bounds to screen width so it doesn't walk off screen
       if (globalLeft + targetMove < 50) {
-        targetMove = Math.abs(targetMove); 
+        targetMove = Math.abs(targetMove);
       } else if (globalLeft + targetMove > screenWidth - 150) {
-        targetMove = -Math.abs(targetMove); 
+        targetMove = -Math.abs(targetMove);
       }
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setFacingRight(targetMove > 0);
@@ -120,9 +120,8 @@ export default function AnimatedPet({ pet, equippedItems, onClickShop, onDeleteP
   return (
     <div className="flex flex-col items-center gap-3 w-full h-full">
       <div
-        className={`relative w-full h-full flex items-center justify-center shrink-0 transition-colors ${
-          pet.is_dead ? "grayscale opacity-80" : "group"
-        }`}
+        className={`relative w-full h-full flex items-center justify-center shrink-0 transition-colors ${pet.is_dead ? "grayscale opacity-80" : "group"
+          }`}
         onClick={!pet.is_dead ? interact : undefined}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -134,44 +133,44 @@ export default function AnimatedPet({ pet, equippedItems, onClickShop, onDeleteP
         </div>
 
         <motion.div
-           drag
-           dragMomentum={false}
-           style={{ x, y, touchAction: "none" }}
-           animate={controls}
-           whileDrag={{ scale: 1.1, zIndex: 100 }}
-           onDragEnd={(e, info) => {
-             const el = document.elementFromPoint(info.point.x, info.point.y);
-             if (el?.closest("#trash-can")) {
-               onDeletePet?.();
-               return;
-             }
-             // Active Gravity Drop
-             if (spriteRef.current) {
-               const rect = spriteRef.current.getBoundingClientRect();
-               const floorY = typeof window !== "undefined" ? window.innerHeight - 120 : 800;
-               if (rect.bottom < floorY) {
-                 const fall = floorY - rect.bottom;
-                 controls.start({ y: y.get() + fall, transition: { type: "spring", bounce: 0.4 } });
-               }
-             }
-           }}
-           className="relative w-32 h-32 md:w-48 md:h-48 z-50 cursor-grab active:cursor-grabbing"
-           ref={spriteRef}
+          drag
+          dragMomentum={false}
+          style={{ x, y, touchAction: "none" }}
+          animate={controls}
+          whileDrag={{ scale: 1.1, zIndex: 100 }}
+          onDragEnd={(e, info) => {
+            const el = document.elementFromPoint(info.point.x, info.point.y);
+            if (el?.closest("#trash-can")) {
+              onDeletePet?.();
+              return;
+            }
+            // Active Gravity Drop
+            if (spriteRef.current) {
+              const rect = spriteRef.current.getBoundingClientRect();
+              const floorY = typeof window !== "undefined" ? window.innerHeight - 120 : 800;
+              if (rect.bottom < floorY) {
+                const fall = floorY - rect.bottom;
+                controls.start({ y: y.get() + fall, transition: { type: "spring", bounce: 0.4 } });
+              }
+            }
+          }}
+          className="relative w-32 h-32 md:w-48 md:h-48 z-50 cursor-grab active:cursor-grabbing"
+          ref={spriteRef}
         >
           {/* Chat Cloud (Speech Bubble) */}
           <AnimatePresence>
             {chatMessage && !pet.is_dead && (
-            <motion.div
-              initial={{ opacity: 0, y: 10, scale: 0.8 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 5, scale: 0.8 }}
-              className="absolute -top-6 left-1/2 -translate-x-1/2 bg-surface0 border-2 border-surface2 px-3 py-1 rounded-full shadow-lg z-50 whitespace-nowrap pointer-events-none"
-            >
-              <p className="text-[10px] font-black text-text">{chatMessage}</p>
-              {/* Bubble Tail */}
-              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-surface0 border-b-2 border-r-2 border-surface2 rotate-45" />
-            </motion.div>
-          )}
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.8 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 5, scale: 0.8 }}
+                className="absolute -top-6 left-1/2 -translate-x-1/2 bg-surface0 border-2 border-surface2 px-3 py-1 rounded-full shadow-lg z-50 whitespace-nowrap pointer-events-none"
+              >
+                <p className="text-[10px] font-black text-text">{chatMessage}</p>
+                {/* Bubble Tail */}
+                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-surface0 border-b-2 border-r-2 border-surface2 rotate-45" />
+              </motion.div>
+            )}
           </AnimatePresence>
 
           {/* Emotion Particles */}
@@ -194,9 +193,8 @@ export default function AnimatedPet({ pet, equippedItems, onClickShop, onDeleteP
             <img
               src={imageSrc}
               alt={`${pet.name} - ${animState}`}
-              className={`w-full h-full object-contain drop-shadow-[0_4px_4px_rgba(0,0,0,0.4)] scale-110 select-none pixelated pointer-events-none ${
-                animState === "dead" ? "rotate-90 translate-y-4" : ""
-              } ${animState === "happy" ? "animate-[bounce_0.5s_infinite]" : ""}`}
+              className={`w-full h-full object-contain drop-shadow-[0_4px_4px_rgba(0,0,0,0.4)] scale-110 select-none pixelated pointer-events-none ${animState === "dead" ? "rotate-90 translate-y-4" : ""
+                } ${animState === "happy" ? "animate-[bounce_0.5s_infinite]" : ""}`}
               onError={(e) => {
                 (e.target as HTMLImageElement).style.opacity = "0";
               }}
@@ -213,22 +211,33 @@ export default function AnimatedPet({ pet, equippedItems, onClickShop, onDeleteP
             {equippedItems?.map((item) => {
               // Determine z-index by item type
               const zClass =
-                item.type === "body"    ? "z-20" :
-                item.type === "face"    ? "z-28" :
-                item.type === "head"    ? "z-30" :
+                item.type === "body" ? "z-20" :
+                  item.type === "face" ? "z-28" :
+                    item.type === "head" ? "z-30" :
                 /* cosmetic/default */    "z-25";
+
+              // Resolve frame-synced sprite path for animated cosmetics
+              let cosmeticSrc = item.image_url;
+              if (item.sprite_folder) {
+                const folder = item.sprite_folder;
+                if (animState === "walk") {
+                  cosmeticSrc = `/asset/kosmetik/${folder}/WALK/${folder}_WALK${frame}.png`;
+                } else {
+                  // idle, sleep, happy, eating, dead — all use IDLE sprites
+                  cosmeticSrc = `/asset/kosmetik/${folder}/IDLE/${folder}${frame}.png`;
+                }
+              }
 
               return (
                 <motion.img
                   key={item.id}
-                  src={item.image_url}
+                  src={cosmeticSrc}
                   alt={item.name}
                   initial={{ opacity: 0, scale: 0.6 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ type: "spring", stiffness: 280, damping: 20 }}
-                  className={`absolute inset-0 w-full h-full object-contain drop-shadow-md scale-110 pointer-events-none select-none pixelated ${zClass} ${
-                    animState === "dead" ? "rotate-90 translate-y-4" : ""
-                  }`}
+                  className={`absolute inset-0 w-full h-full object-contain drop-shadow-md scale-110 pointer-events-none select-none pixelated ${zClass} ${animState === "dead" ? "rotate-90 translate-y-4" : ""
+                    }`}
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.opacity = "0";
                   }}
@@ -241,7 +250,7 @@ export default function AnimatedPet({ pet, equippedItems, onClickShop, onDeleteP
 
         {/* Shop hint */}
         {onClickShop && !pet.is_dead && (
-          <div 
+          <div
             onClick={(e) => { e.stopPropagation(); onClickShop(); }}
             className="absolute top-2 right-2 bg-crust/50 group-hover:bg-blue/80 text-text group-hover:text-crust p-1.5 rounded-full backdrop-blur-sm transition-all shadow-md cursor-pointer z-30"
             title="Beli Makanan di Toko"
