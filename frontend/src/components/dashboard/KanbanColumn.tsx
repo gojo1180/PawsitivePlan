@@ -45,16 +45,6 @@ export default function KanbanColumn({
         </div>
 
         <div className="flex gap-2 items-center">
-          {!isDoneCol && colName !== "To Do" && (
-            <button
-              onClick={() => onRemoveColumn(colName)}
-              className="text-red hover:bg-red/20 p-1 rounded-md"
-              title="Delete Column"
-              aria-label={`Delete column ${colName}`}
-            >
-              <Trash2 size={14} />
-            </button>
-          )}
           {isDoneCol && tasks.length > 0 && (
             <button
               onClick={onClearCompleted}

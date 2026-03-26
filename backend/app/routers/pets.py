@@ -71,6 +71,10 @@ def get_my_pet(user_id: str = Depends(get_current_user), db: Client = Depends(ge
                         "is_dead": is_dead,
                         "last_updated": now.isoformat()
                     }
+                    if is_dead:
+                        update_data["level"] = 1
+                        update_data["experience"] = 0
+                        
                     db.table("pets").update(update_data).eq("id", pet["id"]).execute()
                     pet.update(update_data)
             except Exception as e:
@@ -161,6 +165,38 @@ def feed_pet(inventory_id: str, user_id: str = Depends(get_current_user), db: Cl
         db.table("pets").update(update_data).eq("id", pet["id"]).execute()
         
         return {"message": f"Berhasil memberikan {shop_item.get('name')} kepada peliharaanmu", "pet_stats": update_data}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.post("/revive")
+def revive_pet(user_id: str = Depends(get_current_user), db: Client = Depends(get_supabase)):
+    try:
+        profile_res = db.table("profiles").select("coins").eq("id", user_id).execute()
+        if not profile_res.data:
+            raise HTTPException(status_code=404, detail="Profile not found")
+        
+        coins = profile_res.data[0]["coins"]
+        REVIVE_COST = 100
+        if coins < REVIVE_COST:
+            raise HTTPException(status_code=400, detail=f"Koin tidak cukup. Butuh {REVIVE_COST} koin untuk menghidupkan.")
+            
+        # Deduct coins
+        db.table("profiles").update({"coins": coins - REVIVE_COST}).eq("id", user_id).execute()
+        
+        # Reset pet stats
+        now = datetime.now(timezone.utc).isoformat()
+        update_data = {
+            "health": 100,
+            "hunger": 100,
+            "thirst": 100,
+            "is_dead": False,
+            "last_updated": now
+        }
+        db.table("pets").update(update_data).eq("user_id", user_id).execute()
+        
+        return {"message": "Peliharaan berhasil dihidupkan!", "pet_stats": update_data, "coins_deducted": REVIVE_COST}
     except HTTPException:
         raise
     except Exception as e:

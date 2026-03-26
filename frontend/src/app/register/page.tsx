@@ -109,20 +109,6 @@ export default function RegisterPage() {
             />
           </div>
 
-          <div className="relative">
-            <div className="w-full bg-surface1 text-text border-2 border-surface2 rounded-xl flex items-center px-4 focus-within:border-blue focus-within:bg-surface2/50 transition-colors">
-              <span className="text-subtext0 font-medium whitespace-nowrap mr-3">Pet:</span>
-              <select 
-                className="w-full bg-transparent py-3 focus:outline-none font-medium text-text appearance-none cursor-pointer"
-                value={form.species}
-                onChange={e => setForm({...form, species: e.target.value})}
-              >
-                <option value="kucing">Kucing (Cat)</option>
-                <option value="anjing">Anjing (Dog)</option>
-                <option value="burung">Burung (Bird)</option>
-              </select>
-            </div>
-          </div>
 
           <div className="pt-4 pb-1">
             <motion.button 

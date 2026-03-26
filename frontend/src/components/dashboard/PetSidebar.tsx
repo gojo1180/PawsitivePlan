@@ -12,9 +12,10 @@ interface PetSidebarProps {
   onFeedPet?: (inventoryId: string) => void;
   isFeeding?: boolean;
   onDeletePet?: () => void;
+  onRevivePet?: () => void;
 }
 
-export default function PetSidebar({ data, onClickShop, onFeedPet, isFeeding, onDeletePet }: PetSidebarProps) {
+export default function PetSidebar({ data, onClickShop, onFeedPet, isFeeding, onDeletePet, onRevivePet }: PetSidebarProps) {
   const { pet, inventory } = data;
   
   // Categorize inventory for equipped cosmetics vs consumables
@@ -23,11 +24,16 @@ export default function PetSidebar({ data, onClickShop, onFeedPet, isFeeding, on
 
   return (
     <div className="w-[300px] md:w-[320px] shrink-0 bg-surface0 border-l-4 border-surface1 h-full shadow-[-4px_0_15px_rgba(0,0,0,0.1)] flex flex-col items-center py-6 px-4 relative z-40">
-      <div className="w-full flex justify-between items-center mb-4 border-b-2 border-surface1 pb-2">
-        <h3 className="font-black text-xs uppercase tracking-[0.2em] text-subtext0">Peliharaanku</h3>
-        <span className="text-[9px] bg-mauve/20 text-mauve px-1.5 py-0.5 rounded uppercase font-black">
-          Lv {pet.level}
-        </span>
+      <div className="w-full flex justify-between items-end mb-4 border-b-2 border-surface1 pb-2">
+        <h3 className="font-black text-xs uppercase tracking-[0.2em] text-subtext0 mb-1">Peliharaanku</h3>
+        <div className="flex flex-col items-end gap-1 w-20">
+          <span className="text-[9px] bg-mauve/20 text-mauve px-1.5 py-0.5 rounded uppercase font-black">
+            Lv {pet.level}
+          </span>
+          <div className="w-full h-[6px] bg-surface1 rounded-full overflow-hidden border border-surface2 shadow-inner" title={`EXP: ${pet.experience}/100`}>
+            <div className="h-full bg-yellow transition-all duration-1000" style={{ width: `${Math.max(0, pet.experience)}%` }} />
+          </div>
+        </div>
       </div>
 
       <AnimatedPet pet={pet} equippedItems={equippedCosmetics} onClickShop={onClickShop} onDeletePet={onDeletePet} />
@@ -94,7 +100,13 @@ export default function PetSidebar({ data, onClickShop, onFeedPet, isFeeding, on
             <AlertCircle size={48} className="text-red animate-bounce" />
             <div>
               <h3 className="text-xl font-black text-red mb-2">Peliharaan Mati</h3>
-              <p className="text-sm font-bold text-subtext0">Peliharaanmu telah mati karena kelaparan atau kehausan.</p>
+              <p className="text-sm font-bold text-subtext0 mb-4">Peliharaanmu telah mati karena kelaparan atau kehausan.</p>
+              <button
+                onClick={() => onRevivePet?.()}
+                className="text-xs bg-red hover:bg-maroon text-crust font-black py-2 px-4 rounded-xl border-b-4 border-maroon tracking-wider uppercase flex items-center gap-1 mx-auto active:translate-y-1 active:border-b-0 transition-all shadow-lg"
+              >
+                <Sparkles size={14} /> Hidupkan (100 Koin)
+              </button>
             </div>
           </div>
         </div>

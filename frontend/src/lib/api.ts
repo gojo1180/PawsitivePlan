@@ -1,4 +1,4 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://pawsitive-plan.vercel.app";
 
 /**
  * Standard fetch wrapper that automatically injects the Supabase JWT token
@@ -7,7 +7,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   // Gracefully handle SSR token checks
   const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
-  
+
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     ...(options.headers as Record<string, string> || {}),

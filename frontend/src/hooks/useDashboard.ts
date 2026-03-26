@@ -89,7 +89,15 @@ export function useDashboard() {
     try {
       const res = await fetchApi(`/tasks/${taskId}/complete`, { method: "PATCH" });
       setData((prev) =>
-        prev ? { ...prev, profile: { ...prev.profile, coins: res.new_coins_balance } } : prev
+        prev ? { 
+          ...prev, 
+          profile: { ...prev.profile, coins: res.new_coins_balance },
+          pet: { 
+            ...prev.pet, 
+            level: res.new_pet_level ?? prev.pet.level, 
+            experience: res.new_pet_experience ?? prev.pet.experience 
+          }
+        } : prev
       );
       setTasks((prev) =>
         prev.map((t) => (t.id === taskId ? { ...t, is_completed: true, category: DONE_COLUMN } : t))
@@ -120,6 +128,17 @@ export function useDashboard() {
       loadDashboard();
     } catch {
       toast.error("Gagal membuang peliharaan.");
+    }
+  };
+
+  const revivePet = async () => {
+    try {
+      await fetchApi("/pets/revive", { method: "POST" });
+      toast.success("Pet berhasil dihidupkan!");
+      loadDashboard();
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal menghidupkan pet.";
+      toast.error(msg);
     }
   };
 
@@ -302,7 +321,7 @@ export function useDashboard() {
     setGoal, setIsAddingTask, setActiveTag,
     setManualTask, setManualReward, setManualCategory, setManualDueDate, setManualTags,
     // Actions
-    handleLogout, completeTask, deleteTask, clearCompleted, feedPet, discardPet,
+    handleLogout, completeTask, deleteTask, clearCompleted, feedPet, discardPet, revivePet,
     addManualTask, onDragEnd,
     handleGenerateAI, saveAITasks, updateAiTask, removeAiTask,
     toggleColumnVis, clearColumnFilter, loadDashboard,

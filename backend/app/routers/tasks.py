@@ -78,7 +78,32 @@ def complete_task(task_id: str, user_id: str = Depends(get_current_user), db: Cl
         # 3. Synchronize new balance
         db.table("profiles").update({"coins": new_coins}).eq("id", user_id).execute()
         
-        return {"message": "Task completed", "reward": reward_coins, "new_coins_balance": new_coins}
+        # 4. Handle pet experience logic
+        pet_res = db.table("pets").select("id, experience, level").eq("user_id", user_id).execute()
+        new_pet_level = 1
+        new_pet_experience = 0
+        if pet_res.data:
+            pet = pet_res.data[0]
+            pet_id = pet["id"]
+            current_exp = pet.get("experience", 0)
+            current_level = pet.get("level", 1)
+            
+            new_exp = current_exp + 20
+            new_pet_level = current_level + (new_exp // 100)
+            new_pet_experience = new_exp % 100
+            
+            db.table("pets").update({
+                "level": new_pet_level,
+                "experience": new_pet_experience
+            }).eq("id", pet_id).execute()
+        
+        return {
+            "message": "Task completed", 
+            "reward": reward_coins, 
+            "new_coins_balance": new_coins,
+            "new_pet_level": new_pet_level,
+            "new_pet_experience": new_pet_experience
+        }
     except HTTPException:
         raise
     except Exception as e:

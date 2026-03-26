@@ -14,6 +14,7 @@ interface PetTabProps {
   onFeedPet?: (inventoryId: string) => void;
   isFeeding?: boolean;
   onDeletePet?: () => void;
+  onRevivePet?: () => void;
   onRefresh?: () => void; // to reload data after equip
 }
 
@@ -75,7 +76,7 @@ const CONSUMABLE_TYPES = ["food", "water", "consumable"] as const;
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 
-export default function PetTab({ data, onClickShop, onFeedPet, isFeeding, onDeletePet, onRefresh }: PetTabProps) {
+export default function PetTab({ data, onClickShop, onFeedPet, isFeeding, onDeletePet, onRevivePet, onRefresh }: PetTabProps) {
   const { pet, inventory } = data;
   const [showInventory, setShowInventory] = useState(false);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
@@ -304,9 +305,14 @@ export default function PetTab({ data, onClickShop, onFeedPet, isFeeding, onDele
                 <h2 className="pixel-font text-[10px] text-mauve leading-tight truncate">{optimisticPet.name || "My Pet"}</h2>
                 <p className="text-[10px] text-subtext0 font-black uppercase tracking-widest mt-1">{optimisticPet.species}</p>
               </div>
-              <span className="pixel-font text-[8px] bg-mauve/20 text-mauve px-2 py-1 rounded-md border border-mauve/30">
-                Lv{optimisticPet.level}
-              </span>
+              <div className="flex flex-col items-end gap-1.5 w-24">
+                <span className="pixel-font text-[8px] bg-mauve/20 text-mauve px-2 py-1 rounded-md border border-mauve/30">
+                  Lv{optimisticPet.level}
+                </span>
+                <div className="w-full h-[6px] bg-surface1 rounded-full border border-surface2 overflow-hidden shadow-inner" title={`EXP: ${optimisticPet.experience}/100`}>
+                  <div className="h-full bg-yellow transition-all duration-1000" style={{ width: `${Math.max(0, optimisticPet.experience)}%` }} />
+                </div>
+              </div>
             </div>
 
             <div className="flex flex-col gap-2.5">
@@ -477,7 +483,13 @@ export default function PetTab({ data, onClickShop, onFeedPet, isFeeding, onDele
             <AlertCircle size={64} className="text-red animate-bounce" />
             <div>
               <h3 className="text-3xl font-black text-red mb-2 uppercase tracking-wider">Pet Mati</h3>
-              <p className="text-sm font-bold text-subtext0">Peliharaanmu telah tiada karena kelaparan atau kehausan yang fatal.</p>
+              <p className="text-sm font-bold text-subtext0 mb-4">Peliharaanmu telah tiada karena kelaparan atau kehausan yang fatal.</p>
+              <button
+                onClick={() => onRevivePet?.()}
+                className="bg-red hover:bg-maroon text-crust font-black py-2 px-6 rounded-xl border-b-4 border-maroon tracking-wider uppercase flex items-center gap-2 mx-auto active:translate-y-1 active:border-b-0 transition-all shadow-lg"
+              >
+                <Sparkles size={18} /> Hidupkan Kembali (100 Koin)
+              </button>
             </div>
           </div>
         </div>

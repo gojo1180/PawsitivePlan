@@ -33,7 +33,7 @@ export default function DashboardPage() {
     isFeeding,
     setIsAddingTask, setActiveTag,
     setManualTask, setManualReward, setManualCategory, setManualDueDate, setManualTags,
-    handleLogout, completeTask, deleteTask, clearCompleted, feedPet, discardPet,
+    handleLogout, completeTask, deleteTask, clearCompleted, feedPet, discardPet, revivePet,
     addManualTask, onDragEnd,
     toggleColumnVis, clearColumnFilter, loadDashboard,
   } = useDashboard();
@@ -216,6 +216,7 @@ export default function DashboardPage() {
               onFeedPet={feedPet}
               isFeeding={isFeeding}
               onDeletePet={discardPet}
+              onRevivePet={revivePet}
               onRefresh={loadDashboard}
             />
           )}
