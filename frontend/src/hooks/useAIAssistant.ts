@@ -11,7 +11,7 @@ export interface ChatMessage {
   tasks?: AiTaskDraft[];
 }
 
-export function useAIAssistant(boardColumns: string[], onTasksSaved: (state: "starting" | "success" | "error") => void) {
+export function useAIAssistant(boardColumns: string[], onTasksSaved: (state: "starting" | "success" | "error", tasks?: AiTaskDraft[]) => void) {
   const [messages, setMessages] = useState<ChatMessage[]>([
     { id: "init", role: "ai", text: "Hello! Ada yang bisa saya bantu hari ini?" }
   ]);
@@ -88,8 +88,8 @@ export function useAIAssistant(boardColumns: string[], onTasksSaved: (state: "st
     // Optimistic Clear
     setMessages(prev => prev.map(m => m.id === messageId ? { ...m, tasks: [] } : m));
     
-    // Notify parent to show syncing hint
-    onTasksSaved("starting");
+    // Notify parent to show syncing hint and pass draft tasks
+    onTasksSaved("starting", tasksToSave);
 
     // Parallel Background Saving
     Promise.all(

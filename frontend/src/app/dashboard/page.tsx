@@ -36,7 +36,7 @@ export default function DashboardPage() {
     setManualTask, setManualReward, setManualCategory, setManualDueDate, setManualTags,
     handleLogout, completeTask, deleteTask, clearCompleted, feedPet, discardPet, revivePet,
     addManualTask, onDragEnd,
-    toggleColumnVis, clearColumnFilter, loadDashboard,
+    toggleColumnVis, clearColumnFilter, loadDashboard, addOptimisticTasks,
   } = useDashboard();
 
   // Refresh Pet Inventory when switching to Pet Tab
@@ -288,8 +288,13 @@ export default function DashboardPage() {
           <div className="w-[300px] md:w-[320px] overflow-hidden">
             <AIAssistantSidebar
               boardColumns={boardColumns}
-              onTasksSaved={(state) => {
-                if (state === "starting") setIsSyncingAI(true);
+              onTasksSaved={(state, tasksToSave) => {
+                if (state === "starting") {
+                  setIsSyncingAI(true);
+                  if (tasksToSave && tasksToSave.length > 0) {
+                    addOptimisticTasks(tasksToSave);
+                  }
+                }
                 if (state === "success") {
                   loadDashboard();
                   setTimeout(() => setIsSyncingAI(false), 2000);

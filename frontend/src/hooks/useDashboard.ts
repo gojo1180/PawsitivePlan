@@ -273,6 +273,26 @@ export function useDashboard() {
 
   // ─── AI Quests ────────────────────────────────────────────────────────────────
 
+  const addOptimisticTasks = (drafts: AiTaskDraft[]) => {
+    const defaultCol = boardColumns.find((c) => c !== DONE_COLUMN) || "Daily Quest";
+    const mappedTasks: Task[] = drafts.map((t) => ({
+      id: "temp-" + Date.now() + "-" + Math.random().toString(36).substring(7),
+      user_id: "optimistic",
+      title: t.title,
+      description: null,
+      reward_coins: t.reward_coins,
+      is_completed: false,
+      is_ai_generated: true,
+      category: t.category || defaultCol,
+      order_index: tasks.length * 10,
+      due_date: null,
+      tags: [],
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }));
+    setTasks((prev) => [...prev, ...mappedTasks]);
+  };
+
   const handleGenerateAI = async () => {
     if (!goal) return;
     setGenerating(true);
@@ -336,6 +356,6 @@ export function useDashboard() {
     handleLogout, completeTask, deleteTask, clearCompleted, feedPet, discardPet, revivePet,
     addManualTask, onDragEnd,
     handleGenerateAI, saveAITasks, updateAiTask, removeAiTask,
-    toggleColumnVis, clearColumnFilter, loadDashboard,
+    toggleColumnVis, clearColumnFilter, loadDashboard, addOptimisticTasks,
   };
 }

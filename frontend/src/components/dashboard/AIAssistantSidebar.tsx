@@ -5,9 +5,11 @@ import { Send, Coins, X, Check, MoreVertical, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { DONE_COLUMN } from "@/lib/constants";
 
+import { AiTaskDraft } from "@/types";
+
 interface AIAssistantSidebarProps {
   boardColumns: string[];
-  onTasksSaved: (state: "starting" | "success" | "error") => void;
+  onTasksSaved: (state: "starting" | "success" | "error", tasks?: AiTaskDraft[]) => void;
 }
 
 export default function AIAssistantSidebar({ boardColumns, onTasksSaved }: AIAssistantSidebarProps) {
