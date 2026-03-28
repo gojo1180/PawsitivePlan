@@ -7,7 +7,7 @@ import { DONE_COLUMN } from "@/lib/constants";
 
 interface AIAssistantSidebarProps {
   boardColumns: string[];
-  onTasksSaved: () => void;
+  onTasksSaved: (state: "starting" | "success" | "error") => void;
 }
 
 export default function AIAssistantSidebar({ boardColumns, onTasksSaved }: AIAssistantSidebarProps) {
@@ -43,11 +43,10 @@ export default function AIAssistantSidebar({ boardColumns, onTasksSaved }: AIAss
           <div key={msg.id} className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}>
             {/* Bubble */}
             <div
-              className={`max-w-[85%] px-4 py-2 rounded-lg border-2 font-bold text-sm ${
-                msg.role === "user"
+              className={`max-w-[85%] px-4 py-2 rounded-lg border-2 font-bold text-sm ${msg.role === "user"
                   ? "bg-blue/10 border-blue text-text pixel-shadow"
                   : "bg-surface1 border-surface2 text-text pixel-shadow"
-              }`}
+                }`}
             >
               {msg.text}
             </div>
@@ -111,8 +110,9 @@ export default function AIAssistantSidebar({ boardColumns, onTasksSaved }: AIAss
                     </motion.div>
                   ))}
                 </AnimatePresence>
-                
+
                 <button
+                  type="button"
                   onClick={() => {
                     try {
                       new Audio("/asset/audio/Tambah_task.mp3").play();

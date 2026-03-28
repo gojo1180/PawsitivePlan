@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
+from typing import Any
 from supabase import Client
 from datetime import datetime, timezone
 import math
@@ -153,7 +154,7 @@ def feed_pet(inventory_id: str, user_id: str = Depends(get_current_user), db: Cl
             raise HTTPException(status_code=400, detail="Peliharaan kamu sudah tiada. Tidak bisa makan lagi.")
             
         now = datetime.now(timezone.utc).isoformat()
-        update_data = {"last_updated": now}
+        update_data: dict[str, Any] = {"last_updated": now}
         
         if item_type == "food" or item_type == "consumable":
             update_data["hunger"] = min(100, pet.get("hunger", 100) + 30)

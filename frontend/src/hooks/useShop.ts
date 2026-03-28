@@ -6,7 +6,7 @@ import { fetchApi } from "@/lib/api";
 import { Profile, ShopItem, InventoryItem } from "@/types";
 import { toast } from "react-hot-toast";
 
-export function useShop() {
+export function useShop(onItemBought?: () => void) {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [shopItems, setShopItems] = useState<ShopItem[]>([]);
@@ -37,6 +37,7 @@ export function useShop() {
   const handleBuy = async (itemId: string, quantity: number = 1) => {
     try {
       await fetchApi(`/shop/buy/${itemId}?quantity=${quantity}`, { method: "POST" });
+      if (onItemBought) onItemBought();
       toast.success("Purchase successful!");
       loadData();
     } catch (err: unknown) {

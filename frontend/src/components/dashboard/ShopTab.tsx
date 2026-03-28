@@ -78,8 +78,8 @@ function ShopItemCard({ item, inventory, onBuy }: { item: ShopItem, inventory: I
   );
 }
 
-export default function ShopTab() {
-  const { profile, shopItems, inventory, loading, handleBuy, handleToggleEquip } = useShop();
+export default function ShopTab({ onItemBought }: { onItemBought?: () => void }) {
+  const { profile, shopItems, inventory, loading, handleBuy, handleToggleEquip } = useShop(onItemBought);
 
   if (loading) return <div className="flex-1 flex items-center justify-center"><LoadingScreen /></div>;
 

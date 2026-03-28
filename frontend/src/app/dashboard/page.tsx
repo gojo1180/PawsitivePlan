@@ -27,6 +27,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>("quest");
   const [isAiOpen, setIsAiOpen] = useState(false);
+  const [isSyncingAI, setIsSyncingAI] = useState(false);
   const {
     mounted, data, tasks, boardColumns, visibleColumns, activeTag,
     isAddingTask, manualTask, manualReward, manualCategory, manualDueDate, manualTags,
@@ -58,7 +59,7 @@ export default function DashboardPage() {
   const handleAIManualReload = () => {
     // Force reload via a full page reload or routing refresh to refetch tasks 
     // Since useDashboard doesn't expose a clean refetchTasks yet outside loadDashboard
-    window.location.reload();
+    loadDashboard();
   };
 
   return (
@@ -70,8 +71,9 @@ export default function DashboardPage() {
       />
 
       {/* ─── Tabs Bar ───────────────────────────────────────────────────────────── */}
-      <div className="bg-surface0 border-b-4 border-surface2 px-6 py-2 shrink-0 flex gap-2 sm:gap-3 z-30">
-        <button
+      <div className="bg-surface0 border-b-4 border-surface2 px-6 py-2 shrink-0 flex justify-between items-center z-30">
+        <div className="flex gap-2 sm:gap-3">
+          <button
           onClick={() => setActiveTab("quest")}
           className={`flex items-center gap-2 px-5 py-2.5 pixel-font text-[10px] uppercase transition-all rounded-lg border-2 ${activeTab === "quest"
               ? "bg-blue/15 text-blue border-blue/30 pixel-shadow-blue"
@@ -98,6 +100,20 @@ export default function DashboardPage() {
         >
           <ShoppingBag size={18} /> Shop
         </button>
+        </div>
+        
+        <AnimatePresence>
+          {isSyncingAI && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              className="flex items-center gap-2 pixel-font text-[10px] text-yellow bg-yellow/10 px-3 py-1.5 rounded-lg border-2 border-yellow/30 uppercase tracking-wider"
+            >
+              <Sparkles size={14} className="animate-pulse" /> Syncing AI...
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* ─── Main Content Container ────────────────────────────────────────────── */}
@@ -223,7 +239,7 @@ export default function DashboardPage() {
 
           {/* SHOP TAB */}
           {activeTab === "shop" && (
-            <ShopTab />
+            <ShopTab onItemBought={loadDashboard} />
           )}
 
         </div>
@@ -272,7 +288,16 @@ export default function DashboardPage() {
           <div className="w-[300px] md:w-[320px] overflow-hidden">
             <AIAssistantSidebar
               boardColumns={boardColumns}
-              onTasksSaved={handleAIManualReload}
+              onTasksSaved={(state) => {
+                if (state === "starting") setIsSyncingAI(true);
+                if (state === "success") {
+                  loadDashboard();
+                  setTimeout(() => setIsSyncingAI(false), 2000);
+                }
+                if (state === "error") {
+                  setIsSyncingAI(false);
+                }
+              }}  
             />
           </div>
         </div>

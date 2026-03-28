@@ -11,7 +11,7 @@ export interface ChatMessage {
   tasks?: AiTaskDraft[];
 }
 
-export function useAIAssistant(boardColumns: string[], onTasksSaved: () => void) {
+export function useAIAssistant(boardColumns: string[], onTasksSaved: (state: "starting" | "success" | "error") => void) {
   const [messages, setMessages] = useState<ChatMessage[]>([
     { id: "init", role: "ai", text: "Hello! Ada yang bisa saya bantu hari ini?" }
   ]);
@@ -80,13 +80,21 @@ export function useAIAssistant(boardColumns: string[], onTasksSaved: () => void)
     }));
   };
 
-  const handleSaveTasks = async (messageId: string) => {
+  const handleSaveTasks = (messageId: string) => {
     const msg = messages.find(m => m.id === messageId);
     if (!msg || !msg.tasks || msg.tasks.length === 0) return;
 
-    try {
-      for (const t of msg.tasks) {
-        await fetchApi("/tasks", {
+    const tasksToSave = [...msg.tasks];
+    // Optimistic Clear
+    setMessages(prev => prev.map(m => m.id === messageId ? { ...m, tasks: [] } : m));
+    
+    // Notify parent to show syncing hint
+    onTasksSaved("starting");
+
+    // Parallel Background Saving
+    Promise.all(
+      tasksToSave.map(t =>
+        fetchApi("/tasks", {
           method: "POST",
           body: JSON.stringify({
             title: t.title,
@@ -94,14 +102,17 @@ export function useAIAssistant(boardColumns: string[], onTasksSaved: () => void)
             is_ai_generated: true,
             category: t.category,
           }),
-        });
-      }
-      // Remove tasks from the chat message now that they are saved
-      setMessages(prev => prev.map(m => m.id === messageId ? { ...m, tasks: [] } : m));
-      onTasksSaved(); // Trigger parent completely reloading dashboard
-    } catch {
-      toast.error("Failed to save tasks.");
-    }
+        })
+      )
+    ).then(() => {
+      // Notify parent to refresh board
+      onTasksSaved("success"); 
+    }).catch(() => {
+      toast.error("Gagal menyimpan task ke server.");
+      // Rollback
+      setMessages(prev => prev.map(m => m.id === messageId ? { ...m, tasks: tasksToSave } : m));
+      onTasksSaved("error");
+    });
   };
 
   return {

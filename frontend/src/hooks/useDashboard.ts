@@ -85,26 +85,33 @@ export function useDashboard() {
 
   // ─── Task Actions ─────────────────────────────────────────────────────────────
 
-  const completeTask = async (taskId: string) => {
-    try {
-      const res = await fetchApi(`/tasks/${taskId}/complete`, { method: "PATCH" });
-      setData((prev) =>
-        prev ? { 
-          ...prev, 
-          profile: { ...prev.profile, coins: res.new_coins_balance },
-          pet: { 
-            ...prev.pet, 
-            level: res.new_pet_level ?? prev.pet.level, 
-            experience: res.new_pet_experience ?? prev.pet.experience 
-          }
-        } : prev
-      );
-      setTasks((prev) =>
-        prev.map((t) => (t.id === taskId ? { ...t, is_completed: true, category: DONE_COLUMN } : t))
-      );
-    } catch {
-      toast.error("Failed to complete task");
-    }
+  const completeTask = (taskId: string) => {
+    const previousTasks = [...tasks];
+    // Immediate State Mutation
+    setTasks((prev) =>
+      prev.map((t) => (t.id === taskId ? { ...t, is_completed: true, category: DONE_COLUMN } : t))
+    );
+
+    // Background API Call
+    fetchApi(`/tasks/${taskId}/complete`, { method: "PATCH" })
+      .then((res) => {
+        setData((prev) =>
+          prev ? { 
+            ...prev, 
+            profile: { ...prev.profile, coins: res.new_coins_balance },
+            pet: { 
+              ...prev.pet, 
+              level: res.new_pet_level ?? prev.pet.level, 
+              experience: res.new_pet_experience ?? prev.pet.experience 
+            }
+          } : prev
+        );
+      })
+      .catch(() => {
+        // Error Rollback
+        setTasks(previousTasks);
+        toast.error("Gagal menghubungi server");
+      });
   };
 
   const feedPet = async (inventoryId: string) => {
@@ -142,13 +149,18 @@ export function useDashboard() {
     }
   };
 
-  const deleteTask = async (taskId: string) => {
-    try {
-      await fetchApi(`/tasks/${taskId}`, { method: "DELETE" });
-      setTasks((prev) => prev.filter((t) => t.id !== taskId));
-    } catch {
-      toast.error("Failed to delete task");
-    }
+  const deleteTask = (taskId: string) => {
+    const previousTasks = [...tasks];
+    // Immediate State Mutation
+    setTasks((prev) => prev.filter((t) => t.id !== taskId));
+
+    // Background API Call
+    fetchApi(`/tasks/${taskId}`, { method: "DELETE" })
+      .catch(() => {
+        // Error Rollback
+        setTasks(previousTasks);
+        toast.error("Gagal menghubungi server");
+      });
   };
 
   const clearCompleted = async () => {
