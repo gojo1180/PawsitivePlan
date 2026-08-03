@@ -12,7 +12,7 @@ app = FastAPI(title="Gamified Productivity API", version="1.0.0")
 # Setup CORS for the Next.js frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://front-pawsitive-plan.vercel.app"], # Add production URLs later
+    allow_origins=["*"], # Remove invalid ,* syntax
     allow_credentials=True,
     allow_methods=["*"], 
     allow_headers=["*"], 
