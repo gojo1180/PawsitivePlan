@@ -21,7 +21,7 @@ def generate_tasks_for_goal(goal: str) -> List[dict]:
 
     # We use gemini-1.5-flash and configure it to strictly return JSON
     model = genai.GenerativeModel(
-        "gemini-3-flash-preview",
+        "gemini-3.6-flash",
         generation_config={"response_mime_type": "application/json"}
     )
 
